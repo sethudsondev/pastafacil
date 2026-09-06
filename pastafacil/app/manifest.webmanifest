@@ -1,0 +1,18 @@
+{
+  "id": "/pastafacil/app/",
+  "name": "PastaFácil - criar pastas em lote",
+  "short_name": "PastaFácil",
+  "description": "Cole uma lista de nomes e crie uma pasta para cada um. Roda 100% no navegador.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#04050c",
+  "theme_color": "#0a1a4a",
+  "lang": "pt-BR",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-192-maskable.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

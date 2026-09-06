@@ -1,0 +1,700 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PastaFácil: criar pastas em lote</title>
+<meta name="description" content="Cole uma lista de nomes e baixe um .zip com uma pasta para cada nome. Roda 100% no seu navegador.">
+<meta property="og:title" content="PastaFácil | Lumvix">
+<meta property="og:description" content="Cole uma lista de nomes e baixe um .zip com uma pasta para cada nome. Roda 100% no seu navegador.">
+<meta property="og:image" content="https://lumvix.com.br/pastafacil/app/icon-512.png">
+<meta property="og:image:width" content="512">
+<meta property="og:image:height" content="512">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:alt" content="Logo do PastaFácil">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://lumvix.com.br/pastafacil/app/">
+<meta property="og:locale" content="pt_BR">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="PastaFácil | Lumvix">
+<meta name="twitter:description" content="Cole uma lista de nomes e baixe um .zip com uma pasta para cada nome. Roda 100% no seu navegador.">
+<meta name="twitter:image" content="https://lumvix.com.br/pastafacil/app/icon-512.png">
+<link rel="canonical" href="https://lumvix.com.br/pastafacil/app/">
+<link rel="icon" href="/pastafacil/icon.svg">
+<link rel="manifest" href="/pastafacil/app/manifest.webmanifest">
+<meta name="theme-color" content="#0a1a4a">
+<link rel="apple-touch-icon" href="/pastafacil/app/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="PastaFácil">
+<style>
+  :root{
+    --bg:#04050c; --panel:#0d1226; --panel-2:#10162e; --border:#212a4a;
+    --text:#f2f4fb; --dim:#8f9ac2; --cyan:#00d9ff; --blue:#2f6fff; --purple:#8b5cf6;
+    --ok:#28c76f; --warn:#ffab3d; --err:#ff5c6c;
+    --input-bg:#070a16; --drop-border:#33406e; --tint-bg:rgba(0,217,255,.08);
+    --msg-err-bg:rgba(255,92,108,.12); --msg-err-text:#ffb3ba;
+    --msg-ok-bg:rgba(40,199,111,.12); --msg-ok-text:#8ff0bd;
+    --msg-warn-bg:rgba(255,171,61,.12); --msg-warn-text:#ffd39b;
+    --badge-ok-bg:rgba(40,199,111,.16); --badge-ok-text:#8ff0bd;
+    --badge-ajustado-bg:rgba(255,171,61,.16); --badge-ajustado-text:#ffd39b;
+    --badge-invalido-bg:rgba(255,92,108,.16); --badge-invalido-text:#ffb3ba;
+    --counts-warn-bg:rgba(255,171,61,.15); --counts-warn-text:#ffd39b;
+    --counts-err-bg:rgba(255,92,108,.15); --counts-err-text:#ffb3ba;
+    --surface-04:rgba(255,255,255,.04); --surface-05:rgba(255,255,255,.05); --surface-06:rgba(255,255,255,.06); --surface-08:rgba(255,255,255,.08);
+  }
+  :root[data-theme="light"]{
+    --bg:#f5f7fc; --panel:#ffffff; --panel-2:#eef1fa; --border:#d7deef;
+    --text:#111629; --dim:#5a6485; --cyan:#0072b8; --blue:#2f6fff; --purple:#8b5cf6;
+    --input-bg:#ffffff; --drop-border:#aab7d9; --tint-bg:rgba(0,114,184,.1);
+    --msg-err-bg:#fde3e5; --msg-err-text:#b3273a;
+    --msg-ok-bg:#dcf7e8; --msg-ok-text:#1a8f52;
+    --msg-warn-bg:#fdecd4; --msg-warn-text:#a35a00;
+    --badge-ok-bg:#d3f5e3; --badge-ok-text:#157a45;
+    --badge-ajustado-bg:#fde6c2; --badge-ajustado-text:#93500a;
+    --badge-invalido-bg:#fbd9dc; --badge-invalido-text:#9c2033;
+    --counts-warn-bg:#fde6c2; --counts-warn-text:#93500a;
+    --counts-err-bg:#fbd9dc; --counts-err-text:#9c2033;
+    --surface-04:rgba(17,22,41,.04); --surface-05:rgba(17,22,41,.05); --surface-06:rgba(17,22,41,.06); --surface-08:rgba(17,22,41,.08);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.55}
+  .wrap{max-width:840px;margin:0 auto;padding:22px 16px 60px}
+  h1{font-size:1.35rem;margin:0 0 4px;display:flex;align-items:center;gap:12px}
+  h1 .logo{width:40px;height:40px;border-radius:10px;display:block}
+  h1 span{background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .lead{color:var(--dim);margin:6px 0 22px;font-size:.95rem}
+  .card{background:linear-gradient(160deg,var(--panel-2),var(--panel));border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:16px}
+  .card h2{font-size:1rem;margin:0 0 12px}
+  .tabs{display:flex;gap:6px;margin-bottom:12px}
+  .tab{background:transparent;border:1px solid var(--border);color:var(--dim);padding:8px 14px;border-radius:9px;cursor:pointer;font:inherit}
+  .tab.on{border-color:var(--cyan);color:var(--text);background:var(--tint-bg)}
+  textarea,input[type=text],input[type=number],select{width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:9px;padding:10px 12px;color:var(--text);font:inherit}
+  textarea{resize:vertical;min-height:150px}
+  textarea:focus,input:focus,select:focus{outline:none;border-color:var(--cyan)}
+  .hint{font-size:.82rem;color:var(--dim);margin:6px 0 0}
+  code{background:var(--surface-06);padding:1px 5px;border-radius:5px;font-size:.85em}
+  .drop{display:block;border:1.5px dashed var(--drop-border);border-radius:11px;padding:22px;text-align:center;color:var(--dim);cursor:pointer;transition:.15s}
+  .drop:hover,.drop.over{border-color:var(--cyan);color:var(--text);background:var(--tint-bg)}
+  .files{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:6px}
+  .files li{display:flex;align-items:center;gap:10px;background:var(--input-bg);border:1px solid var(--border);border-radius:9px;padding:8px 10px;font-size:.86rem}
+  .files li .n{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .files li .c{color:var(--dim);font-size:.8rem}
+  .files li button{background:none;border:none;color:var(--dim);cursor:pointer;font-size:1rem;padding:0 4px}
+  .files li button:hover{color:var(--err)}
+  .field{margin-top:12px}
+  .field > label{display:block;font-size:.82rem;color:var(--dim);margin-bottom:5px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+  @media(max-width:760px){.grid3{grid-template-columns:1fr 1fr}}
+  @media(max-width:560px){.grid2{grid-template-columns:1fr}.grid3{grid-template-columns:1fr}}
+  .check{display:flex;gap:8px;align-items:center;font-size:.9rem}
+  .check input{width:auto}
+  .colcheck{display:flex;flex-wrap:wrap;gap:8px}
+  .colcheck label{display:flex;align-items:center;gap:6px;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;padding:7px 11px;font-size:.86rem;cursor:pointer}
+  .colcheck label.on{border-color:var(--cyan);background:var(--tint-bg)}
+  .colcheck input{width:auto}
+  .colcheck .ex{color:var(--dim);font-size:.78rem}
+  .colcheck .reorder{display:inline-flex;flex-direction:column;gap:1px;margin-left:4px}
+  .colcheck .reorder-btn{background:none;border:none;color:var(--dim);cursor:pointer;font-size:.6rem;line-height:1;padding:1px 3px;border-radius:4px}
+  .colcheck .reorder-btn:hover{color:var(--cyan);background:var(--tint-bg)}
+  details.adv{border:1px solid var(--border);border-radius:11px;padding:0 14px;margin-top:4px}
+  details.adv > summary{cursor:pointer;padding:12px 0;font-weight:600;font-size:.92rem;list-style:none}
+  details.adv > summary::-webkit-details-marker{display:none}
+  details.adv > summary::before{content:"▸ ";color:var(--cyan)}
+  details.adv[open] > summary::before{content:"▾ "}
+  details.adv .body{padding-bottom:14px;display:flex;flex-direction:column;gap:12px}
+  .actions{display:flex;gap:10px;flex-wrap:wrap;margin:2px 0 14px}
+  .btn{font:inherit;font-weight:600;border-radius:10px;padding:11px 18px;cursor:pointer;border:1px solid transparent}
+  .btn.primary{background:linear-gradient(135deg,var(--cyan),var(--blue));color:#04121b}
+  .btn.ghost{background:var(--surface-04);border-color:var(--border);color:var(--text)}
+  .btn:disabled{opacity:.5;cursor:default}
+  .msg{padding:10px 14px;border-radius:10px;font-size:.9rem;margin-bottom:14px}
+  .msg.err{background:var(--msg-err-bg);color:var(--msg-err-text)}
+  .msg.ok{background:var(--msg-ok-bg);color:var(--msg-ok-text)}
+  .msg.warn{background:var(--msg-warn-bg);color:var(--msg-warn-text)}
+  .progress{height:8px;background:var(--input-bg);border:1px solid var(--border);border-radius:999px;overflow:hidden;margin-bottom:14px}
+  .progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--blue));transition:width .15s}
+  .counts{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+  .counts span{font-size:.8rem;padding:5px 10px;border-radius:999px;background:var(--surface-05)}
+  .counts .c-warn{background:var(--counts-warn-bg);color:var(--counts-warn-text)}
+  .counts .c-err{background:var(--counts-err-bg);color:var(--counts-err-text)}
+  .tablewrap{overflow:auto;border:1px solid var(--border);border-radius:10px;max-height:380px}
+  table{border-collapse:collapse;width:100%;font-size:.88rem}
+  th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);white-space:nowrap}
+  th{position:sticky;top:0;background:var(--panel);font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;color:var(--dim)}
+  td.origin{color:var(--dim)}
+  .badge{font-size:.72rem;font-weight:600;padding:2px 8px;border-radius:999px}
+  .badge.ok{background:var(--badge-ok-bg);color:var(--badge-ok-text)}
+  .badge.ajustado{background:var(--badge-ajustado-bg);color:var(--badge-ajustado-text)}
+  .badge.duplicado{background:var(--surface-08);color:var(--dim)}
+  .badge.invalido{background:var(--badge-invalido-bg);color:var(--badge-invalido-text)}
+  .is-hidden{display:none!important}
+  .foot{color:var(--dim);font-size:.8rem;margin-top:8px}
+  a{color:var(--cyan)}
+  .savebar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px;padding-top:12px;border-top:1px solid var(--border)}
+  .btn.sm{padding:7px 12px;font-size:.85rem}
+  #libList li .n{cursor:pointer}
+  #libList li .n:hover{color:var(--cyan)}
+  .topbar{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:8px;margin-bottom:2px}
+  #btnInstall{padding:6px 12px;font-size:.82rem}
+  .modeswitch{display:flex;gap:6px;margin:14px 0 18px}
+  .modeswitch button{flex:1;background:transparent;border:1px solid var(--border);color:var(--dim);padding:10px 14px;border-radius:10px;cursor:pointer;font:inherit;font-weight:600}
+  .modeswitch button.on{border-color:var(--cyan);color:var(--text);background:var(--tint-bg)}
+  .langswitch{display:flex;gap:4px}
+  .langswitch button{background:transparent;border:1px solid var(--border);color:var(--dim);padding:5px 9px;border-radius:7px;cursor:pointer;font:inherit;font-size:.78rem;font-weight:700}
+  .langswitch button.on{border-color:var(--cyan);color:var(--text)}
+  .theme-toggle{background:transparent;border:1px solid var(--border);color:var(--text);width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:.9rem;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+  .theme-toggle:hover{border-color:var(--cyan)}
+  #sideMenuOverlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:998}
+  #sideMenu{position:fixed;top:0;right:0;height:100%;width:290px;max-width:85vw;background:var(--panel);border-left:1px solid var(--border);z-index:999;padding:18px;overflow-y:auto;box-shadow:-10px 0 34px rgba(0,0,0,.35)}
+  #sideMenuOverlay.is-hidden,#sideMenu.is-hidden{display:none}
+  .side-menu-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+  .side-menu-head strong{font-size:1rem}
+  .side-menu-close{background:none;border:none;color:var(--dim);font-size:1.3rem;cursor:pointer;line-height:1;padding:2px 6px}
+  .side-menu-close:hover{color:var(--text)}
+  .side-menu-back{background:none;border:none;color:var(--dim);cursor:pointer;font:inherit;font-size:.88rem;font-weight:600;padding:2px 4px}
+  .side-menu-back:hover{color:var(--cyan)}
+  .side-menu-cat{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--dim);font-weight:700;margin:18px 0 8px}
+  .side-menu-cat:first-of-type{margin-top:0}
+  .menu-item{display:flex;align-items:center;gap:9px;width:100%;text-align:left;background:transparent;border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:9px;cursor:pointer;font:inherit;font-size:.9rem;margin-bottom:6px}
+  .menu-subview h3{font-size:1rem;margin:0 0 10px}
+  .menu-subview .hint{font-size:.85rem;line-height:1.55}
+  .menu-subview .hint + .hint{margin-top:12px}
+  .menu-item:hover{border-color:var(--cyan);background:var(--tint-bg)}
+  .recursos-grid{display:grid;grid-template-columns:1fr;gap:8px}
+  .recurso{display:flex;align-items:center;gap:9px;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:11px 13px;font-size:.86rem}
+  .recurso .ok{flex:none;width:20px;height:20px;border-radius:50%;background:rgba(40,199,111,.15);color:#28c76f;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700}
+</style>
+</head>
+<body>
+<div class="update-banner" id="updateBanner" style="display:none;position:sticky;top:0;z-index:9999;background:linear-gradient(135deg,#0a1a4a,#1e4fc0);color:#fff;text-align:center;padding:8px 14px;font-size:.85rem;font-weight:600;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap">
+  <span data-i18n="updateMsg">⟳ Tem uma versão nova do PastaFácil pronta.</span>
+  <button type="button" onclick="location.reload()" style="background:#fff;color:#0a1a4a;border:none;border-radius:6px;padding:4px 12px;font-weight:700;cursor:pointer" data-i18n="updateBtn">Atualizar agora</button>
+</div>
+
+<div id="sideMenuOverlay" class="is-hidden" onclick="pfCloseMenu()"></div>
+<nav id="sideMenu" class="is-hidden" aria-label="Menu">
+
+  <div id="menuViewList">
+    <div class="side-menu-head">
+      <strong data-i18n="menuTitle">Menu</strong>
+      <button type="button" class="side-menu-close" onclick="pfCloseMenu()" aria-label="Fechar">✕</button>
+    </div>
+
+    <div class="side-menu-cat" data-i18n="menuCatAjuda">Ajuda</div>
+    <button type="button" class="menu-item" onclick="pfShowView('tutorial')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg><span data-i18n="tutorialBtn">Tutorial</span></button>
+
+    <div class="side-menu-cat" data-i18n="menuCatSobre">Sobre o PastaFácil</div>
+    <button type="button" class="menu-item" onclick="pfShowView('recursos')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg><span data-i18n="recursosBtn">Recursos</span></button>
+    <button type="button" class="menu-item" onclick="pfShowView('privacidade')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg><span data-i18n="privacidadeBtn">Privacidade</span></button>
+
+    <div class="side-menu-cat" data-i18n="menuCatDados">Meus dados (neste navegador)</div>
+    <button type="button" class="menu-item" onclick="pfShowView('historico')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v5h5"></path><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"></path><path d="M12 7v5l4 2"></path></svg><span data-i18n="historicoBtn">Histórico</span></button>
+    <button type="button" class="menu-item" onclick="pfShowView('lib')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span data-i18n="libTitle">Minhas listas salvas</span></button>
+    <button type="button" class="menu-item" onclick="pfShowView('config')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg><span data-i18n="configBtn">Configurações</span></button>
+  </div>
+
+  <div id="menuViewTutorial" class="is-hidden menu-subview">
+    <div class="side-menu-head">
+      <button type="button" class="side-menu-back" onclick="pfShowView('list')">← <span data-i18n="menuVoltar">Voltar</span></button>
+      <button type="button" class="side-menu-close" onclick="pfCloseMenu()" aria-label="Fechar">✕</button>
+    </div>
+    <p class="hint" data-i18n="tutorialIntro" data-i18n-html><b>Visão geral:</b> a ferramenta tem dois modos, alternáveis nos botões abaixo da lista: <b>"Criar pastas"</b> (gera uma pasta pra cada nome de uma lista) e <b>"Renomear existentes"</b> (renomeia pastas que já existem no seu computador). Os dois rodam 100% no navegador, nada do que você digita ou envia sai do seu computador.</p>
+    <p class="hint" data-i18n="tutorialInput" data-i18n-html><b>1. Fornecer a lista de nomes</b><br>Na aba "Colar nomes", digite ou cole um nome por linha (linhas em branco e as que começam com <code>#</code> são ignoradas). Na aba "Enviar arquivos", você pode enviar: <b>.txt/.csv</b> (uma linha ou coluna por nome), <b>.xlsx/.xls</b> (planilha, com escolha de colunas), <b>PDF</b> (o texto é extraído automaticamente) ou uma <b>imagem/foto/print</b> (a ferramenta lê o texto da imagem por OCR, inclusive colando direto com Ctrl+V). Revise sempre o resultado do PDF/OCR: a leitura automática não é 100% exata, principalmente em letra de mão ou fotos tortas/escuras.</p>
+    <p class="hint" data-i18n="tutorialSheet" data-i18n-html><b>2. Trabalhando com planilhas</b><br>Ao enviar uma planilha, marque quais colunas formam o nome da pasta (pode marcar mais de uma; a coluna de nome já vem primeiro e a de matrícula/código por último, na ordem padrão - use as setinhas <b>▲▼</b> ao lado de cada uma se quiser mudar) e o texto que separa elas. Se a primeira linha da planilha for um título (cabeçalho) em vez de um nome de verdade, marque "Primeira linha é título" pra ignorá-la. Planilhas com mais de uma aba mostram um seletor de aba (a ferramenta já escolhe sozinha a primeira aba com dados, pulando abas de capa/instruções vazias); marcando "Criar uma pasta para cada aba", a ferramenta gera pastas separadas pra cada aba da planilha de uma vez.</p>
+    <p class="hint" data-i18n="tutorialGroup" data-i18n-html><b>3. Agrupar em subpastas</b><br>Em "Agrupar em pastas por", escolha uma coluna pra criar uma subpasta por valor dela (ex.: uma pasta por turma, e dentro de cada uma, a pasta de cada aluno). Se você marcar a mesma coluna usada no nome da pasta, aparece um aviso: o valor vai repetir (uma vez como pasta do grupo, outra vez dentro do nome) - isso é esperado, não é erro, mas se não for o que você quer, é só trocar pra "Nenhum" ou escolher outra coluna pro nome.</p>
+    <p class="hint" data-i18n="tutorialDocs" data-i18n-html><b>4. Colocar documentos dentro das pastas</b><br>Em "Documentos para colocar dentro das pastas", envie arquivos cujo nome comece igual ao nome de uma pessoa da lista (ex.: "João da Silva.pdf" entra sozinho dentro da pasta "João da Silva"). Útil pra distribuir contratos, boletins, certificados etc. junto com a criação das pastas, tudo de uma vez.</p>
+    <p class="hint" data-i18n="tutorialAdvanced2" data-i18n-html><b>5. Opções avançadas (tudo opcional)</b><br><b>Prefixo:</b> texto fixo antes de cada nome. <b>Maiúsculas/minúsculas:</b> muda só a caixa das letras. <b>Numerar as pastas:</b> acrescenta 001, 002... na ordem da lista (escolha onde começar e quantos dígitos). <b>Modelo de subpasta:</b> cria níveis dentro da pasta de cada pessoa (ex.: <code>{nome}/Documentos</code> gera uma subpasta "Documentos" vazia dentro de cada uma). <b>Remover acentos:</b> troca á/ã/ç etc. por a/a/c. <b>Arquivo LEIA-ME.txt:</b> garante que a pasta não fique vazia (alguns programas de zip pulam pastas vazias ao extrair).</p>
+    <p class="hint" data-i18n="tutorialWho" data-i18n-html><b>6. Quem está gerando (registro para auditoria)</b><br>Antes dos botões de criar/baixar, tem um bloco opcional pra informar <b>nome, matrícula, setor, unidade e função</b> de quem está gerando aquela leva de pastas - colaborador ou cliente. Não é obrigatório, mas quando preenchido, fica gravado num arquivo de relatório dentro do resultado (e também no log de anexos, se houver documentos), junto com a data e a hora - já que a ferramenta não tem login nem servidor, é assim que fica um histórico de quem gerou o quê.</p>
+    <p class="hint" data-i18n="tutorialSaveShare" data-i18n-html><b>7. Salvar e compartilhar configurações</b><br>"Salvar na biblioteca" guarda a lista e as configurações atuais só no seu navegador (aparece depois em "Minhas listas salvas", pra reabrir sem digitar tudo de novo - some se você limpar os dados do navegador). "Copiar link da configuração" gera um link que guarda só as opções escolhidas (separador, colunas, prefixo etc.), nunca a lista de nomes em si - dá pra mandar esse link pra outra pessoa configurar igual, sem compartilhar dados de ninguém.</p>
+    <p class="hint" data-i18n="tutorialOutput" data-i18n-html><b>8. Pré-visualizar e criar as pastas</b><br>Clique em "Pré-visualizar" pra ver a tabela com o nome final de cada pasta e o status de cada linha (ok, ajustado, duplicado ou inválido) antes de criar qualquer coisa de verdade. Depois, "Baixar pastas (.zip)" funciona em qualquer navegador (baixe e "Extrair tudo"). Já "Criar direto numa pasta" cria as pastas na hora, sem baixar nem extrair zip - só aparece no Chrome ou Edge, no computador (não funciona no celular nem em outros navegadores).</p>
+    <p class="hint" data-i18n="tutorialRename2" data-i18n-html><b>Modo "Renomear existentes"</b><br>Clique em "Escolher pasta..." e selecione, no seu computador, a pasta-mãe que já contém as subpastas a renomear (só funciona no Chrome/Edge, no computador). Depois, cole uma lista no formato <code>nome atual =&gt; nome novo</code> (uma linha por pasta - também aceita <code>|</code>, <code>;</code> ou tabulação como separador), ou envie uma planilha com a coluna 1 = nome atual e coluna 2 = nome novo. Pré-visualize pra conferir e clique em "Renomear pastas": a renomeação acontece direto no seu computador, sem gerar nenhum arquivo pra baixar.</p>
+    <p class="hint" data-i18n="tutorialExtras" data-i18n-html><b>Outros recursos</b><br>No topo da página: troque o idioma (PT/EN/ES) e (se o navegador oferecer) instale a ferramenta como aplicativo pra abrir direto da tela inicial e usar até sem internet - o tema claro/escuro segue automaticamente a preferência do seu sistema. Quando sair uma versão nova da ferramenta, aparece um aviso no topo da página com um botão pra atualizar.</p>
+  </div>
+
+  <div id="menuViewRecursos" class="is-hidden menu-subview">
+    <div class="side-menu-head">
+      <button type="button" class="side-menu-back" onclick="pfShowView('list')">← <span data-i18n="menuVoltar">Voltar</span></button>
+      <button type="button" class="side-menu-close" onclick="pfCloseMenu()" aria-label="Fechar">✕</button>
+    </div>
+    <h3 data-i18n="recursosTitle">✅ Recursos do PastaFácil</h3>
+    <p class="hint" data-i18n="recursosSubtitle">Tudo abaixo já funciona, hoje, na ferramenta.</p>
+    <div class="recursos-grid">
+      <div class="recurso"><span class="ok">✓</span><span data-i18n="recurso01">Colar lista de nomes</span></div>
+      <div class="recurso"><span class="ok">✓</span><span data-i18n="recurso02">Enviar planilha (Excel/CSV)</span></div>
+      <div class="recurso"><span class="ok">✓</span><span data-i18n="recurso03">Enviar arquivo .txt ou PDF</span></div>
+      <div class="recurso"><span class="ok">✓</span><span data-i18n="recurso04">Ler nomes de uma foto/print (OCR)</span></div>
+      <div class="recurso"><span class="ok">✓</span><span data-i18n="recurso05">Detectar e ignorar duplicados</span></div>
+      <div class="recurso"><span class="ok">✓</span><span data-i18n="recurso06">Combinar várias colunas no nome da pasta</span></div>
+      <div class="recurso"><span class="ok">✓</span><span data-i18n="recurso07">Gerar uma pasta pra cada aba da planilha</span></div>
+      <div class="recurso"><span class="ok">✓</span><span data-i18n="recurso08">Organizar em subpastas (cidade, setor...)</span></div>
+      <div class="recurso"><span class="ok">✓</span><span data-i18n="recurso09">Agrupar tudo dentro de uma pasta-mãe</span></div>
+      <div class="recurso"><span class="ok">✓</span><span data-i18n="recurso10">Distribuir documentos nas pastas certas</span></div>
+      <div class="recurso"><span class="ok">✓</span><span data-i18n="recurso11">Prefixo, numeração e modelo de subpasta</span></div>
+      <div class="recurso"><span class="ok">✓</span><span data-i18n="recurso12">Maiúsculas/minúsculas e remover acentos</span></div>
+      <div class="recurso"><span class="ok">✓</span><span data-i18n="recurso13">Arquivo LEIA-ME.txt automático</span></div>
+      <div class="recurso"><span class="ok">✓</span><span data-i18n="recurso14">Pré-visualizar antes de criar</span></div>
+      <div class="recurso"><span class="ok">✓</span><span data-i18n="recurso15">Baixar tudo em um .zip</span></div>
+      <div class="recurso"><span class="ok">✓</span><span data-i18n="recurso16">Criar direto numa pasta do PC</span></div>
+      <div class="recurso"><span class="ok">✓</span><span data-i18n="recurso17">Renomear pastas já existentes (qualquer nível)</span></div>
+      <div class="recurso"><span class="ok">✓</span><span data-i18n="recurso18">Ações em lote pra gerar o de/para</span></div>
+      <div class="recurso"><span class="ok">✓</span><span data-i18n="recurso19">Desfazer a última renomeação</span></div>
+      <div class="recurso"><span class="ok">✓</span><span data-i18n="recurso20">Registro de quem gerou (auditoria)</span></div>
+      <div class="recurso"><span class="ok">✓</span><span data-i18n="recurso21">Exportar relatório em CSV</span></div>
+      <div class="recurso"><span class="ok">✓</span><span data-i18n="recurso22">Salvar listas e mapeamentos na biblioteca</span></div>
+      <div class="recurso"><span class="ok">✓</span><span data-i18n="recurso23">Compartilhar configuração por link</span></div>
+      <div class="recurso"><span class="ok">✓</span><span data-i18n="recurso24">Funciona offline, instalável como app</span></div>
+      <div class="recurso"><span class="ok">✓</span><span data-i18n="recurso25">Aviso automático de atualização</span></div>
+      <div class="recurso"><span class="ok">✓</span><span data-i18n="recurso26">Tema claro/escuro</span></div>
+      <div class="recurso"><span class="ok">✓</span><span data-i18n="recurso27">Português, inglês e espanhol</span></div>
+      <div class="recurso"><span class="ok">✓</span><span data-i18n="recurso28">100% no navegador, nada enviado a servidor</span></div>
+    </div>
+  </div>
+
+  <div id="menuViewPrivacidade" class="is-hidden menu-subview">
+    <div class="side-menu-head">
+      <button type="button" class="side-menu-back" onclick="pfShowView('list')">← <span data-i18n="menuVoltar">Voltar</span></button>
+      <button type="button" class="side-menu-close" onclick="pfCloseMenu()" aria-label="Fechar">✕</button>
+    </div>
+    <h3 data-i18n="privacidadeTitle">🔒 Privacidade</h3>
+    <p class="hint" data-i18n="privacidade1" data-i18n-html><b>Nada sai do seu computador.</b> A lista de nomes, os arquivos que você envia e as pastas geradas são processados 100% dentro do seu navegador.</p>
+    <p class="hint" data-i18n="privacidade2" data-i18n-html><b>Sem servidor.</b> O PastaFácil não tem backend nem banco de dados - não existe um lugar remoto onde seus dados fiquem guardados.</p>
+    <p class="hint" data-i18n="privacidade3" data-i18n-html><b>Sem conta, sem login.</b> Não é preciso se cadastrar nem informar e-mail pra usar a ferramenta.</p>
+    <p class="hint" data-i18n="privacidade4" data-i18n-html><b>O que fica salvo, fica só no seu navegador.</b> "Minhas listas salvas" e as preferências de tema/idioma usam o armazenamento local do navegador (localStorage/IndexedDB) - some se você limpar os dados do site, e nunca é enviado a lugar nenhum.</p>
+    <p class="hint" data-i18n="privacidade5" data-i18n-html><b>Reconhecimento de texto em imagem (OCR)</b> também roda localmente, via WebAssembly - a foto nunca é enviada para nenhum serviço externo.</p>
+  </div>
+
+  <div id="menuViewHistorico" class="is-hidden menu-subview">
+    <div class="side-menu-head">
+      <button type="button" class="side-menu-back" onclick="pfShowView('list')">← <span data-i18n="menuVoltar">Voltar</span></button>
+      <button type="button" class="side-menu-close" onclick="pfCloseMenu()" aria-label="Fechar">✕</button>
+    </div>
+    <h3 data-i18n="historicoTitle">🕘 Histórico de operações</h3>
+    <p class="hint" data-i18n="historicoHint">Guarda, só neste navegador, as últimas vezes que você criou ou renomeou pastas (data, quantidade e onde). Não guarda a lista de nomes em si.</p>
+    <div id="historicoCount" class="hint"></div>
+    <ul id="historicoList" style="list-style:none;padding:0;margin:10px 0;display:flex;flex-direction:column;gap:8px"></ul>
+    <button type="button" class="btn ghost sm" id="historicoClear" data-i18n="historicoClear">Limpar histórico</button>
+  </div>
+
+  <div id="menuViewLib" class="is-hidden menu-subview">
+    <div class="side-menu-head">
+      <button type="button" class="side-menu-back" onclick="pfShowView('list')">← <span data-i18n="menuVoltar">Voltar</span></button>
+      <button type="button" class="side-menu-close" onclick="pfCloseMenu()" aria-label="Fechar">✕</button>
+    </div>
+    <h3><span data-i18n="libTitle">Minhas listas salvas</span> (<span id="libCount">0</span>)</h3>
+    <ul class="files" id="libList"></ul>
+    <p class="hint"><span data-i18n="libHint">Fica salvo só no seu navegador (neste computador).</span> <a href="#" id="libClear" data-i18n="libClear">Apagar tudo</a></p>
+  </div>
+
+  <div id="menuViewConfig" class="is-hidden menu-subview">
+    <div class="side-menu-head">
+      <button type="button" class="side-menu-back" onclick="pfShowView('list')">← <span data-i18n="menuVoltar">Voltar</span></button>
+      <button type="button" class="side-menu-close" onclick="pfCloseMenu()" aria-label="Fechar">✕</button>
+    </div>
+    <h3 data-i18n="configTitle">⚙ Configurações</h3>
+    <p class="hint" data-i18n="configHint" data-i18n-html>Idioma e tema já ficam salvos automaticamente (os botões no topo da página). Aqui você pode salvar como <b>padrão</b> as opções abaixo, pra elas já virem marcadas assim toda vez que abrir a ferramenta - sem precisar reconfigurar em cada lista.</p>
+    <p class="hint" id="configAtual"></p>
+    <div class="row" style="gap:8px;flex-wrap:wrap">
+      <button type="button" class="btn ghost sm" id="configSave" data-i18n="configSave">💾 Salvar opções atuais como padrão</button>
+      <button type="button" class="btn ghost sm" id="configReset" data-i18n="configReset">↺ Restaurar padrão de fábrica</button>
+    </div>
+    <p class="hint" id="configSaveHint"></p>
+  </div>
+
+</nav>
+
+<div class="wrap">
+  <div class="topbar">
+    <button class="btn ghost sm" id="btnMenu" onclick="pfOpenMenu()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;margin-right:3px"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg><span data-i18n="menuBtn">Menu</span></button>
+    <div class="langswitch">
+      <button data-lang="pt">PT</button><button data-lang="en">EN</button><button data-lang="es">ES</button>
+    </div>
+    <button class="theme-toggle" id="pfThemeToggle" onclick="pfToggleTheme()" aria-label="Alternar tema claro/escuro" title="Alternar tema claro/escuro"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></button>
+    <button class="btn ghost" id="btnInstall" hidden><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;margin-right:3px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg><span data-i18n="install">Instalar app</span></button>
+  </div>
+  <h1><img class="logo" src="/pastafacil/icon.svg" alt=""> Pasta<span>Fácil</span></h1>
+  <p class="lead" data-i18n="lead">Crie uma pasta para cada nome de uma lista, ou renomeie pastas que já existem. Roda 100% no seu navegador, nada é enviado a servidor.</p>
+
+
+  <div class="modeswitch">
+    <button class="on" data-mode="criar" data-i18n="modeCreate">Criar pastas</button>
+    <button data-mode="renomear" data-i18n="modeRename">Renomear existentes</button>
+  </div>
+
+  <section class="card">
+    <h2 data-i18n="whoTitle">Quem está gerando (opcional)</h2>
+    <p class="hint" data-i18n="whoHint">Fica registrado no relatório junto com o resultado (data, hora, nome, matrícula, setor, unidade e função), só pra manter um histórico de quem fez cada geração. Não é obrigatório.</p>
+    <div class="grid3">
+      <div><label style="font-size:.82rem;color:var(--dim)" data-i18n="whoName">Nome (colaborador ou cliente)</label><input type="text" id="whoName" data-i18n-ph="whoNamePh" placeholder="ex.: Maria Souza" maxlength="120"></div>
+      <div><label style="font-size:.82rem;color:var(--dim)" data-i18n="whoMatricula">Matrícula</label><input type="text" id="whoMatricula" data-i18n-ph="whoMatriculaPh" placeholder="ex.: 20231234" maxlength="60"></div>
+      <div><label style="font-size:.82rem;color:var(--dim)" data-i18n="whoSector">Setor</label><input type="text" id="whoSector" data-i18n-ph="whoSectorPh" placeholder="ex.: Recursos Humanos" maxlength="120"></div>
+      <div><label style="font-size:.82rem;color:var(--dim)" data-i18n="whoUnidade">Unidade</label><input type="text" id="whoUnidade" data-i18n-ph="whoUnidadePh" placeholder="ex.: Matriz - São Paulo" maxlength="120"></div>
+      <div><label style="font-size:.82rem;color:var(--dim)" data-i18n="whoRole">Função</label><input type="text" id="whoRole" data-i18n-ph="whoRolePh" placeholder="ex.: Analista de RH" maxlength="120"></div>
+    </div>
+  </section>
+
+<div id="modeCreate">
+  <section class="card">
+    <h2 data-i18n="step1">1. Lista de nomes</h2>
+    <div class="tabs">
+      <button class="tab on" data-tab="paste" data-i18n="tabPaste">Colar nomes</button>
+      <button class="tab" data-tab="file" data-i18n="tabFiles">Enviar arquivos</button>
+    </div>
+
+    <div data-panel="paste">
+      <textarea id="names" data-i18n-ph="pastePh" data-i18n-aria="step1" aria-label="Lista de nomes" placeholder="Um nome por linha:&#10;João da Silva&#10;Maria Souza - 20231234&#10;Carlos Eduardo Pereira Lima"></textarea>
+      <p class="hint" data-i18n="pasteHint">Linhas em branco e as que começam com # são ignoradas.</p>
+    </div>
+
+    <div data-panel="file" class="is-hidden">
+      <label class="drop" id="drop">
+        <input type="file" id="file" accept=".txt,.csv,.tsv,.xlsx,.xls,.pdf,image/*" multiple hidden>
+        <span id="dropLabel" data-i18n="dropLabel" data-i18n-html>Arraste arquivos aqui ou <u>clique para escolher</u><br><small>.txt, .csv, .xlsx, .pdf, imagem (pode enviar vários)</small></span>
+      </label>
+      <ul class="files is-hidden" id="fileList"></ul>
+
+      <div id="tableOpts" class="is-hidden">
+        <div class="field is-hidden" id="sheetField">
+          <label data-i18n="sheet">Aba da planilha</label>
+          <select id="sheet"></select>
+          <label class="check" style="margin-top:8px"><input type="checkbox" id="allSheets"> <span data-i18n="allSheets">Criar uma pasta para cada aba (usa todas as abas)</span></label>
+        </div>
+
+        <div class="field">
+          <label data-i18n="nameCols">Colunas que formam o nome da pasta</label>
+          <div id="nameCols" class="colcheck"></div>
+          <p class="hint" data-i18n="nameColsHint">Marque uma ou mais. Serão juntadas na ordem em que aparecem aqui (use ▲▼ pra mudar a ordem), com o separador abaixo.</p>
+        </div>
+        <div class="grid2">
+          <div><label style="font-size:.82rem;color:var(--dim)" data-i18n="sep">Separador entre as colunas</label><input type="text" id="separator" value=" - " maxlength="8">
+            <p class="hint" data-i18n="sepHint">Fica entre os valores das colunas marcadas acima. Ex.: com "&nbsp;-&nbsp;", o nome vira "João Silva - 20231234".</p>
+          </div>
+          <div><label style="font-size:.82rem;color:var(--dim)" data-i18n="groupBy">Agrupar em pastas por</label>
+            <select id="groupColumn"><option value="" data-i18n="groupNone">Nenhum (tudo no mesmo nível)</option></select>
+            <p class="hint" data-i18n="groupByHint">Cria uma subpasta pra cada valor dessa coluna, e a pasta de cada nome fica dentro dela. Ex.: agrupando por "Turma", vira Turma A/João, Turma A/Maria, Turma B/Carlos.</p>
+          </div>
+        </div>
+        <div class="grid2 is-hidden" id="groupColumn2Wrap">
+          <div><label style="font-size:.82rem;color:var(--dim)" data-i18n="groupBy2">E também por (2º nível, opcional)</label>
+            <select id="groupColumn2"><option value="" data-i18n="groupNone2">Nenhum</option></select>
+            <p class="hint" data-i18n="groupBy2Hint">Cria mais um nível de subpasta dentro do primeiro. Ex.: agrupando por "Cidade" e depois por "Setor", vira Cidade/Setor/Nome.</p>
+          </div>
+        </div>
+        <p class="hint is-hidden" id="groupWarn" style="color:var(--warn)" data-i18n="groupWarn" data-i18n-html><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;margin-right:3px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>Essa coluna também está marcada acima. O nome dela vai aparecer duas vezes no caminho da pasta: uma como grupo, outra no nome.</p>
+        <label class="check" style="margin-top:12px"><input type="checkbox" id="hasHeader"> <span data-i18n="header">Primeira linha é título (ignorar)</span></label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label data-i18n="subdir">Agrupar tudo dentro de uma pasta (opcional)</label>
+      <input type="text" id="subdir" data-i18n-ph="subdirPh" placeholder="ex.: Turma A 2026">
+      <p class="hint" data-i18n="subdirHint">Todas as pastas criadas ficam dentro dessa pasta-mãe, em vez de soltas. Útil pra organizar tudo junto num só lugar.</p>
+    </div>
+
+    <div class="field">
+      <label data-i18n="docs">Documentos para colocar dentro das pastas (opcional)</label>
+      <label class="drop" id="docDrop">
+        <input type="file" id="docFile" multiple hidden>
+        <span id="docDropLabel" data-i18n="docsDrop" data-i18n-html>Arraste arquivos aqui ou <u>clique para escolher</u><br><small>Cada arquivo entra na pasta da pessoa com nome correspondente (ex.: "João da Silva.pdf" → pasta "João da Silva")</small></span>
+      </label>
+      <ul class="files is-hidden" id="docList"></ul>
+    </div>
+
+    <div class="is-hidden" id="perGroupWrap" style="margin-top:10px">
+      <label class="check">
+        <input type="checkbox" id="perGroupZip"> <span data-i18n="perGroup" data-i18n-html>Gerar um <code>.zip</code> separado para cada grupo (dentro do arquivo final)</span>
+      </label>
+      <p class="hint" data-i18n="perGroupHint">Em vez de um único .zip com tudo dentro, baixa um .zip para cada grupo (ex.: um .zip por turma), todos dentro de um arquivo .zip principal.</p>
+    </div>
+
+    <div class="savebar">
+      <button type="button" class="btn ghost sm" id="btnSave"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;margin-right:3px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span data-i18n="save">Salvar na biblioteca</span></button>
+      <button type="button" class="btn ghost sm" id="btnShareCfg"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;margin-right:3px"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg><span data-i18n="shareCfg">Copiar link da configuração</span></button>
+      <span class="hint" id="saveHint"></span>
+    </div>
+  </section>
+
+  <details class="adv">
+    <summary data-i18n="adv">Opções avançadas</summary>
+    <div class="body">
+      <div class="grid3">
+        <div><label style="font-size:.82rem;color:var(--dim)" data-i18n="prefix">Prefixo em cada pasta</label><input type="text" id="prefix" data-i18n-ph="prefixPh" placeholder="ex.: Aluno ">
+          <p class="hint" data-i18n="prefixHint">Entra antes do nome em toda pasta. Ex.: prefixo "Aluno " + nome "João" = pasta "Aluno João".</p>
+        </div>
+        <div><label style="font-size:.82rem;color:var(--dim)" data-i18n="letterCase">Maiúsculas / minúsculas</label>
+          <select id="letterCase"><option value="" data-i18n="caseKeep">Manter como está</option><option value="upper" data-i18n="caseUpper">MAIÚSCULAS</option><option value="lower" data-i18n="caseLower">minúsculas</option></select>
+          <p class="hint" data-i18n="letterCaseHint">Só muda a caixa das letras do nome, não mexe no prefixo nem no separador.</p>
+        </div>
+        <div><label style="font-size:.82rem;color:var(--dim)" data-i18n="sortOrder">Ordenar lista</label>
+          <select id="sortOrder"><option value="" data-i18n="sortKeep">Ordem original</option><option value="az" data-i18n="sortAz">A → Z</option><option value="za" data-i18n="sortZa">Z → A</option></select>
+          <p class="hint" data-i18n="sortOrderHint">Reordena os nomes antes de gerar (não afeta agrupamento nem numeração por grupo).</p>
+        </div>
+      </div>
+      <label class="check"><input type="checkbox" id="number"> <span data-i18n="number">Numerar as pastas (001, 002, 003…)</span></label>
+      <p class="hint" data-i18n="numberHint">Acrescenta um número antes do nome de cada pasta, na ordem em que aparecem na lista. Ex.: "001 - João", "002 - Maria".</p>
+      <div class="grid2 is-hidden" id="numberOpts">
+        <div><label style="font-size:.82rem;color:var(--dim)" data-i18n="numStart">Começar em</label><input type="number" id="numStart" value="1" min="0"></div>
+        <div><label style="font-size:.82rem;color:var(--dim)" data-i18n="numDigits">Dígitos</label><select id="numPad"><option value="0">1, 2, 3</option><option value="2">01, 02</option><option value="3" selected>001, 002</option><option value="4">0001</option></select></div>
+      </div>
+      <div>
+        <label style="font-size:.82rem;color:var(--dim)" data-i18n="template">Modelo de subpasta</label>
+        <input type="text" id="template" data-i18n-ph="templatePh" placeholder="ex.: {nome}/Documentos  ou  Turma A/{nome}">
+        <p class="hint" data-i18n="templateHint" data-i18n-html>Use <code>{nome}</code> onde o nome deve entrar. Barras <code>/</code> criam subníveis.</p>
+      </div>
+      <label class="check"><input type="checkbox" id="noAccents"> <span data-i18n="noAccents">Remover acentos dos nomes das pastas</span></label>
+      <p class="hint" data-i18n="noAccentsHint">Troca á, ã, ç, etc. por a, a, c nos nomes das pastas. Útil se o programa que vai ler os arquivos não lida bem com acentos.</p>
+      <label class="check"><input type="checkbox" id="keepFile"> <span data-i18n="keepFile" data-i18n-html>Colocar um arquivo <code>LEIA-ME.txt</code> dentro de cada pasta</span></label>
+      <p class="hint" data-i18n="keepFileHint">Ative se o programa que abre o .zip costuma pular pastas vazias.</p>
+    </div>
+  </details>
+
+  <div class="actions">
+    <button class="btn ghost" id="btnPreview" data-i18n="preview">Pré-visualizar</button>
+    <button class="btn primary" id="btnDirect" hidden data-i18n="btnDirect">Criar direto numa pasta →</button>
+    <button class="btn primary" id="btnZip" data-i18n="btnZip">Baixar pastas (.zip)</button>
+  </div>
+  <p class="hint" id="fsHint" hidden data-i18n="fsHint">“Criar direto numa pasta” cria as pastas na hora, dentro de uma pasta que você escolher, sem baixar nem extrair zip. (Chrome ou Edge no computador.)</p>
+
+  <p id="msg" class="msg is-hidden" role="status" aria-live="polite"></p>
+  <div class="progress is-hidden" id="progress"><i></i></div>
+
+  <section class="card is-hidden" id="result">
+    <div class="row" style="justify-content:space-between">
+      <h2 id="resultTitle" data-i18n="previewTitle">Prévia</h2>
+      <button type="button" class="btn ghost sm" id="btnExportCsv" data-i18n="exportCsv">Exportar CSV</button>
+    </div>
+    <div class="counts" id="counts"></div>
+    <div id="docInfo"></div>
+    <div class="tablewrap">
+      <table id="planTable"><thead><tr><th data-i18n="colFolder">Pasta / caminho</th><th data-i18n="colOrigin">Origem</th><th data-i18n="colStatus">Status</th></tr></thead><tbody></tbody></table>
+    </div>
+    <p class="foot" id="resultFoot" data-i18n="resultFoot" data-i18n-html>Depois de baixar: botão direito no <code>.zip</code> → <em>Extrair tudo</em>. As pastas aparecem prontas.</p>
+    <button type="button" class="btn ghost sm" id="btnReiniciar" style="margin-top:10px" data-i18n="btnReiniciar">↺ Começar de novo</button>
+  </section>
+</div><!-- /modeCreate -->
+
+<div id="modeRename" class="is-hidden">
+  <section class="card">
+    <h2 data-i18n="rnStep1">1. Escolha a pasta que tem as subpastas</h2>
+    <button class="btn primary" id="rnPick" data-i18n="rnPick">Escolher pasta…</button>
+    <p class="hint" id="rnPickHint" data-i18n="rnPickHint">Funciona no Chrome ou Edge, no computador. As pastas são renomeadas direto no seu PC.</p>
+    <div id="rnFolderInfo" class="is-hidden" style="margin-top:10px"></div>
+  </section>
+
+  <section class="card is-hidden" id="rnMapCard">
+    <h2 data-i18n="rnStep2">2. De → Para</h2>
+    <p class="hint" data-i18n="rnMapHint" data-i18n-html>Cole uma linha por pasta no formato <code>nome atual =&gt; nome novo</code>. Também aceita <code>|</code>, <code>;</code> ou tabulação como separador.</p>
+    <textarea id="rnText" data-i18n-aria="rnStep2" aria-label="De → Para" placeholder="Fulano de Tal =&gt; 001 - Fulano de Tal&#10;Ciclana =&gt; Ciclana Souza"></textarea>
+    <label class="drop" id="rnDrop" style="margin-top:10px">
+      <input type="file" id="rnFile" accept=".csv,.tsv,.xlsx,.xls" hidden>
+      <span data-i18n="rnMapDrop" data-i18n-html>ou clique para enviar uma planilha: <b>coluna 1</b> = nome atual, <b>coluna 2</b> = nome novo</span>
+    </label>
+
+    <div class="savebar">
+      <button type="button" class="btn ghost sm" id="rnSaveMapping"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;margin-right:3px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span data-i18n="rnSaveMapping">Salvar este mapeamento</span></button>
+      <span class="hint" id="rnSaveHint"></span>
+    </div>
+    <details class="adv is-hidden" id="rnLibCard">
+      <summary><span data-i18n="rnLibTitle">Meus mapeamentos salvos</span> (<span id="rnLibCount">0</span>)</summary>
+      <div class="body">
+        <ul class="files" id="rnLibList"></ul>
+        <p class="hint"><span data-i18n="libHint">Fica salvo só no seu navegador (neste computador).</span> <a href="#" id="rnLibClear" data-i18n="libClear">Apagar tudo</a></p>
+      </div>
+    </details>
+
+    <details class="adv" style="margin-top:10px">
+      <summary data-i18n="rnBatchTitle">Ações em lote (gera a lista acima automaticamente)</summary>
+      <div class="body">
+        <p class="hint" data-i18n="rnBatchHint">Aplica em todas as subpastas encontradas de uma vez. Só preenche o campo "De → Para" acima - confira e clique em "Pré-visualizar" antes de renomear de verdade.</p>
+        <div class="grid2">
+          <div><label style="font-size:.82rem;color:var(--dim)" data-i18n="rnBatchPrefix">Adicionar prefixo em todas</label><input type="text" id="rnBatchPrefixInput" data-i18n-ph="rnBatchPrefixPh" placeholder="ex.: Turma A - "></div>
+          <div><button type="button" class="btn ghost sm" id="rnBatchPrefixBtn" style="margin-top:19px" data-i18n="rnBatchApply">Gerar</button></div>
+        </div>
+        <div class="grid2">
+          <div>
+            <label style="font-size:.82rem;color:var(--dim)" data-i18n="rnBatchFind">Trocar texto em todas</label>
+            <input type="text" id="rnBatchFind" data-i18n-ph="rnBatchFindPh" placeholder="ex.: espaço (deixe em branco pra representar espaço)">
+          </div>
+          <div>
+            <label style="font-size:.82rem;color:var(--dim)" data-i18n="rnBatchReplace">Por</label>
+            <input type="text" id="rnBatchReplace" data-i18n-ph="rnBatchReplacePh" placeholder="ex.: -">
+          </div>
+        </div>
+        <button type="button" class="btn ghost sm" id="rnBatchReplaceBtn" data-i18n="rnBatchApply">Gerar</button>
+        <div class="grid2" style="margin-top:10px">
+          <div><button type="button" class="btn ghost sm" id="rnBatchUpper" data-i18n="rnBatchUpperBtn">Gerar tudo em MAIÚSCULAS</button></div>
+          <div><button type="button" class="btn ghost sm" id="rnBatchLower" data-i18n="rnBatchLowerBtn">Gerar tudo em minúsculas</button></div>
+        </div>
+      </div>
+    </details>
+  </section>
+
+  <div class="actions">
+    <button class="btn ghost" id="rnPreview" data-i18n="preview">Pré-visualizar</button>
+    <button class="btn primary" id="rnApply" data-i18n="rnApply">Renomear pastas</button>
+    <button class="btn ghost is-hidden" id="rnUndo" data-i18n="rnUndo">↶ Desfazer última renomeação</button>
+  </div>
+  <p id="rnMsg" class="msg is-hidden" role="status" aria-live="polite"></p>
+  <div class="progress is-hidden" id="rnProgress"><i></i></div>
+
+  <section class="card is-hidden" id="rnResult">
+    <div class="row" style="justify-content:space-between">
+      <h2 data-i18n="previewTitle">Prévia</h2>
+      <button type="button" class="btn ghost sm" id="rnExportCsv" data-i18n="exportCsv">Exportar CSV</button>
+    </div>
+    <div class="counts" id="rnCounts"></div>
+    <div class="tablewrap">
+      <table id="rnTable"><thead><tr><th data-i18n="rnColCur">Nome atual</th><th data-i18n="rnColNew">Novo nome</th><th data-i18n="colStatus">Status</th></tr></thead><tbody></tbody></table>
+    </div>
+  </section>
+</div><!-- /modeRename -->
+
+<script src="/pastafacil/app/i18n.js"></script>
+<script>
+  // Tema comeca seguindo a preferencia do sistema operacional/navegador
+  // (prefers-color-scheme), mas o botao ao lado dos idiomas deixa escolher
+  // manualmente - a escolha fica em localStorage e sincroniza com a pagina
+  // externa do site.
+  // IMPORTANTE: so grava no localStorage quando a pessoa escolhe manualmente
+  // (persist=true). Se gravasse tambem ao apenas "seguir o sistema", o tema
+  // ficava congelado depois da 1a visita e parava de acompanhar o SO.
+  function pfAplicarTema(tema, persist) {
+    document.documentElement.setAttribute('data-theme', tema);
+    if (persist) { try { localStorage.setItem('pastafacil-theme', tema); } catch (e) {} }
+    var btn = document.getElementById('pfThemeToggle');
+    if (btn) btn.innerHTML = tema === 'light'
+      ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>'
+      : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
+  }
+  function pfToggleTheme() {
+    var atual = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+    pfAplicarTema(atual === 'light' ? 'dark' : 'light', true);
+  }
+  // O menu lateral tem varias "telas" (list, tutorial, historico, lib,
+  // config) - so uma fica visivel por vez dentro do proprio menu, sem
+  // precisar rolar a pagina nem esses conteudos aparecerem soltos nela.
+  var MENU_VIEWS = ['list', 'tutorial', 'recursos', 'privacidade', 'historico', 'lib', 'config'];
+  function pfShowView(view) {
+    MENU_VIEWS.forEach(function (v) {
+      var el = document.getElementById('menuView' + v.charAt(0).toUpperCase() + v.slice(1));
+      if (el) el.classList.toggle('is-hidden', v !== view);
+    });
+    if (view === 'config' && typeof pfRefreshConfigAtual === 'function') pfRefreshConfigAtual();
+    var nav = document.getElementById('sideMenu');
+    if (nav) nav.scrollTop = 0;
+  }
+  function pfShowMenu() {
+    document.getElementById('sideMenu').classList.remove('is-hidden');
+    document.getElementById('sideMenuOverlay').classList.remove('is-hidden');
+  }
+  function pfOpenMenu() { pfShowMenu(); pfShowView('list'); }
+  function pfOpenTutorial() { pfShowMenu(); pfShowView('tutorial'); }
+  function pfOpenHistorico() { pfShowMenu(); pfShowView('historico'); }
+  function pfOpenConfig() { pfShowMenu(); pfShowView('config'); }
+  function pfOpenLib() { pfShowMenu(); pfShowView('lib'); }
+  function pfCloseMenu() {
+    document.getElementById('sideMenu').classList.add('is-hidden');
+    document.getElementById('sideMenuOverlay').classList.add('is-hidden');
+  }
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') pfCloseMenu(); });
+  (function () {
+    var salvo = null;
+    try { salvo = localStorage.getItem('pastafacil-theme'); } catch (e) {}
+    var mql = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)');
+    pfAplicarTema(salvo || (mql && mql.matches ? 'light' : 'dark'), false);
+    // Enquanto a pessoa nao escolher manualmente, o tema acompanha o SO ao vivo.
+    if (mql && mql.addEventListener) mql.addEventListener('change', function (ev) {
+      var escolha = null;
+      try { escolha = localStorage.getItem('pastafacil-theme'); } catch (e) {}
+      if (!escolha) pfAplicarTema(ev.matches ? 'light' : 'dark', false);
+    });
+  })();
+  // Mantem o tema em sincronia com a pagina externa (mesma origem, mesmo localStorage)
+  window.addEventListener('storage', function (e) {
+    if (e.key === 'pastafacil-theme' && e.newValue) pfAplicarTema(e.newValue, false);
+  });
+
+  PastaFacilI18n.init();
+  document.querySelectorAll(".langswitch button").forEach(function (b) {
+    b.addEventListener("click", function () { PastaFacilI18n.apply(b.dataset.lang); });
+  });
+</script>
+<script src="/pastafacil/app/vendor/jszip.min.js"></script>
+<script src="/pastafacil/app/core.js"></script>
+<script src="/pastafacil/app/db.js"></script>
+<script src="/pastafacil/app/app.js"></script>
+<script>
+  // PWA: instalar + offline
+  function showUpdateBanner() {
+    var b = document.getElementById("updateBanner");
+    if (!b) return;
+    b.style.display = "flex";
+    // Busca o sw.js recem-instalado (sem cache) so pra ler a versao e o
+    // motivo da atualizacao (VERSION/CHANGENOTE) e mostrar pra pessoa,
+    // antes dela decidir clicar em "Atualizar agora".
+    fetch("/pastafacil/app/sw.js", { cache: "no-store" }).then(function (r) { return r.text(); }).then(function (txt) {
+      var v = (txt.match(/var VERSION = "([^"]+)"/) || [])[1];
+      var nota = (txt.match(/var CHANGENOTE = "([^"]*)"/) || [])[1];
+      var span = b.querySelector("[data-i18n='updateMsg']");
+      if (!span || !v) return;
+      var key = nota ? "updateFull" : "updateVersion";
+      var texto = tr(key);
+      // Se a traducao nao resolveu de verdade (ex.: i18n.js ainda nao carregou
+      // nessa aba), NAO troca o texto - mantem a frase padrao em portugues
+      // que ja esta no HTML, em vez de mostrar o nome tecnico da chave.
+      if (!texto || texto === key) return;
+      span.textContent = "⟳ " + texto.replace("{v}", v.replace(/^pf-v/, "v")).replace("{nota}", nota || "");
+    }).catch(function () {});
+  }
+  function tr(k) {
+    if (!window.PastaFacilI18n || typeof PastaFacilI18n.t !== "function") return "";
+    return PastaFacilI18n.t(k);
+  }
+  if ("serviceWorker" in navigator &&
+      (location.protocol === "https:" || location.hostname === "localhost" || location.hostname === "127.0.0.1")) {
+    window.addEventListener("load", function () {
+      navigator.serviceWorker.register("/pastafacil/app/sw.js").then(function (reg) {
+        // "updatefound" dispara sempre que um sw.js novo comeca a instalar.
+        // Se ja existe um controller nesse momento, essa nao e a primeira
+        // visita - e uma ATUALIZACAO de verdade, e avisamos a pessoa.
+        reg.addEventListener("updatefound", function () {
+          var novo = reg.installing;
+          if (!novo) return;
+          novo.addEventListener("statechange", function () {
+            if (novo.state === "installed" && navigator.serviceWorker.controller) {
+              showUpdateBanner();
+            }
+          });
+        });
+        // Verifica de novo a cada 20 min (util pra quem deixa a aba aberta
+        // por muito tempo, sem nunca recarregar a pagina).
+        setInterval(function () { reg.update().catch(function () {}); }, 20 * 60 * 1000);
+      }).catch(function () {});
+    });
+  }
+  (function () {
+    var deferred = null;
+    var btn = document.getElementById("btnInstall");
+    window.addEventListener("beforeinstallprompt", function (e) {
+      e.preventDefault(); deferred = e; if (btn) btn.hidden = false;
+    });
+    // iOS/iPadOS nunca dispara "beforeinstallprompt" (nao existe API de
+    // instalar programaticamente la) - mas ainda da pra instalar manualmente
+    // via Compartilhar > Adicionar a Tela de Inicio. Mostra o botao mesmo
+    // assim nesse caso, com instrucao passo a passo em vez do prompt nativo.
+    var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    var jaInstalado = window.navigator.standalone === true || window.matchMedia("(display-mode: standalone)").matches;
+    if (isIOS && !jaInstalado && btn) btn.hidden = false;
+    if (btn) btn.addEventListener("click", function () {
+      if (deferred) {
+        deferred.prompt();
+        deferred.userChoice.finally(function () { deferred = null; btn.hidden = true; });
+        return;
+      }
+      if (isIOS) alert(tr("installIosSteps"));
+    });
+    window.addEventListener("appinstalled", function () { if (btn) btn.hidden = true; });
+  })();
+</script>
+</body>
+</html>

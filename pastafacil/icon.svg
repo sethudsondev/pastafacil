@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="PastaFácil">
+  <defs>
+    <linearGradient id="pf-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0a1a4a"/>
+      <stop offset="1" stop-color="#1e4fc0"/>
+    </linearGradient>
+    <linearGradient id="pf-folder" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffd21e"/>
+      <stop offset="1" stop-color="#f6a200"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="512" height="512" rx="116" fill="url(#pf-bg)"/>
+
+  <!-- papéis -->
+  <rect x="168" y="120" width="196" height="236" rx="14" fill="#dfe6f5"/>
+  <rect x="150" y="140" width="196" height="224" rx="14" fill="#ffffff"/>
+
+  <!-- aba de trás -->
+  <path d="M92 168 h120 l30 40 h150 a30 30 0 0 1 30 30 v28 H92 Z" fill="#f6a200"/>
+
+  <!-- corpo da pasta (frente) -->
+  <path d="M92 214 h150 l28 -32 h132 a28 28 0 0 1 28 28 v150 a30 30 0 0 1 -30 30 H94 a30 30 0 0 1 -30 -30 V242 a28 28 0 0 1 28 -28 Z" fill="url(#pf-folder)"/>
+
+  <!-- letra P (vazado azul-marinho) -->
+  <path fill="#0a1a4a" fill-rule="evenodd"
+        d="M190 246 h82 a57 57 0 0 1 0 114 h-44 v50 h-38 Z
+           M228 280 v46 h44 a23 23 0 0 0 0 -46 Z"/>
+
+  <!-- dobra no canto da pasta -->
+  <path d="M190 318 l-26 28 h26 Z" fill="#f6a200"/>
+</svg>
