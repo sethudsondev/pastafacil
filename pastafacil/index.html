@@ -47,7 +47,7 @@
   .menu-btn{background:transparent;border:1px solid var(--border);color:var(--dim);padding:6px 12px;border-radius:8px;cursor:pointer;font:inherit;font-size:.85rem;display:inline-flex;align-items:center;gap:6px}
   .menu-btn:hover{border-color:var(--cyan);color:var(--text)}
   #sideMenuOverlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:998}
-  #sideMenu{position:fixed;top:0;right:0;height:100%;width:290px;max-width:85vw;background:var(--panel);border-left:1px solid var(--border);z-index:999;padding:18px;overflow-y:auto;box-shadow:-10px 0 34px rgba(0,0,0,.35)}
+  #sideMenu{display:block;position:fixed;top:0;right:0;height:100%;width:290px;max-width:85vw;background:var(--panel);border-left:1px solid var(--border);z-index:999;padding:18px;overflow-y:auto;box-shadow:-10px 0 34px rgba(0,0,0,.35)}
   .is-hidden{display:none!important}
   .side-menu-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
   .side-menu-head strong{font-size:1rem;color:var(--text)}
@@ -72,29 +72,29 @@
   <nav>
     <a class="brand" href="/"><img src="/images/lumvix-icon.png" alt="Lumvix">LUMVIX</a>
     <div class="nav-right">
-      <button type="button" class="menu-btn" onclick="pfOpenMenu()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>Menu</button>
+      <button type="button" class="menu-btn" data-pf-action="open"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>Menu</button>
       <a class="back" href="/#produtos">← Produtos</a>
     </div>
   </nav>
 
-  <div id="sideMenuOverlay" class="is-hidden" onclick="pfCloseMenu()"></div>
-  <nav id="sideMenu" class="is-hidden" aria-label="Menu">
+  <div id="sideMenuOverlay" class="is-hidden" data-pf-action="close"></div>
+  <nav id="sideMenu" class="is-hidden" role="dialog" aria-modal="true" aria-label="Menu">
 
     <div id="menuViewList">
       <div class="side-menu-head">
         <strong>Menu</strong>
-        <button type="button" class="side-menu-close" onclick="pfCloseMenu()" aria-label="Fechar">✕</button>
+        <button type="button" class="side-menu-close" data-pf-action="close" aria-label="Fechar">✕</button>
       </div>
-      <button type="button" class="menu-item" onclick="pfShowView('como')">📖 Como funciona</button>
-      <button type="button" class="menu-item" onclick="pfShowView('recursos')">✅ Recursos</button>
-      <button type="button" class="menu-item" onclick="pfShowView('privacidade')">🔒 Privacidade</button>
-      <a class="menu-item" href="#app" onclick="pfCloseMenu()">🚀 Abrir ferramenta</a>
+      <button type="button" class="menu-item" data-pf-view="como">📖 Como funciona</button>
+      <button type="button" class="menu-item" data-pf-view="recursos">✅ Recursos</button>
+      <button type="button" class="menu-item" data-pf-view="privacidade">🔒 Privacidade</button>
+      <a class="menu-item" href="#app" data-pf-action="close">🚀 Abrir ferramenta</a>
     </div>
 
     <div id="menuViewComo" class="is-hidden menu-subview">
       <div class="side-menu-head">
-        <button type="button" class="side-menu-back" onclick="pfShowView('list')">← Voltar</button>
-        <button type="button" class="side-menu-close" onclick="pfCloseMenu()" aria-label="Fechar">✕</button>
+        <button type="button" class="side-menu-back" data-pf-action="back">← Voltar</button>
+        <button type="button" class="side-menu-close" data-pf-action="close" aria-label="Fechar">✕</button>
       </div>
       <h3>Como funciona</h3>
       <div class="passos">
@@ -107,8 +107,8 @@
 
     <div id="menuViewRecursos" class="is-hidden menu-subview">
       <div class="side-menu-head">
-        <button type="button" class="side-menu-back" onclick="pfShowView('list')">← Voltar</button>
-        <button type="button" class="side-menu-close" onclick="pfCloseMenu()" aria-label="Fechar">✕</button>
+        <button type="button" class="side-menu-back" data-pf-action="back">← Voltar</button>
+        <button type="button" class="side-menu-close" data-pf-action="close" aria-label="Fechar">✕</button>
       </div>
       <h3>Recursos do PastaFácil</h3>
       <p style="color:var(--dim);font-size:.85rem;margin:0 0 12px">Tudo abaixo já funciona, hoje, na ferramenta.</p>
@@ -146,8 +146,8 @@
 
     <div id="menuViewPrivacidade" class="is-hidden menu-subview">
       <div class="side-menu-head">
-        <button type="button" class="side-menu-back" onclick="pfShowView('list')">← Voltar</button>
-        <button type="button" class="side-menu-close" onclick="pfCloseMenu()" aria-label="Fechar">✕</button>
+        <button type="button" class="side-menu-back" data-pf-action="back">← Voltar</button>
+        <button type="button" class="side-menu-close" data-pf-action="close" aria-label="Fechar">✕</button>
       </div>
       <h3>Privacidade</h3>
       <ul>
@@ -175,7 +175,7 @@
     <span class="full" style="margin-left:14px">·&nbsp;&nbsp;<a href="/pastafacil/app/" style="color:inherit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;margin-right:3px"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>instalar como app</a> (abra em tela cheia e clique em "Instalar app")</span>
   </div>
 
-  <footer>© <script>document.write(new Date().getFullYear())</script> Lumvix · Ferramenta gratuita · Todos os direitos reservados.</footer>
+  <footer>© <span id="anoAtual"></span> Lumvix · Ferramenta gratuita · Todos os direitos reservados.</footer>
 
   <script type="application/ld+json">
   {
@@ -192,38 +192,6 @@
   }
   </script>
 
-  <script>
-    (function () {
-      var f = document.getElementById('pf');
-      window.addEventListener('message', function (e) {
-        if (e.origin !== location.origin) return;
-        if (e.source !== f.contentWindow || !e.data || e.data.type !== 'pf-height') return;
-        var h = Math.max(360, Math.min(4000, Number(e.data.height) || 0));
-        if (h) f.style.height = (h + 24) + 'px';
-      });
-    })();
-
-    // Menu lateral: uma "tela" por vez (list, como, recursos, privacidade) -
-    // o conteudo aparece dentro do proprio menu, nao solto na pagina.
-    var MENU_VIEWS = ['list', 'como', 'recursos', 'privacidade'];
-    function pfShowView(view) {
-      MENU_VIEWS.forEach(function (v) {
-        var el = document.getElementById('menuView' + v.charAt(0).toUpperCase() + v.slice(1));
-        if (el) el.classList.toggle('is-hidden', v !== view);
-      });
-      var nav = document.getElementById('sideMenu');
-      if (nav) nav.scrollTop = 0;
-    }
-    function pfShowMenu() {
-      document.getElementById('sideMenu').classList.remove('is-hidden');
-      document.getElementById('sideMenuOverlay').classList.remove('is-hidden');
-    }
-    function pfOpenMenu() { pfShowMenu(); pfShowView('list'); }
-    function pfCloseMenu() {
-      document.getElementById('sideMenu').classList.add('is-hidden');
-      document.getElementById('sideMenuOverlay').classList.add('is-hidden');
-    }
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') pfCloseMenu(); });
-  </script>
+  <script src="/pastafacil/landing.js"></script>
 </body>
 </html>

@@ -146,7 +146,7 @@
   .theme-toggle{background:transparent;border:1px solid var(--border);color:var(--text);width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:.9rem;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
   .theme-toggle:hover{border-color:var(--cyan)}
   #sideMenuOverlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:998}
-  #sideMenu{position:fixed;top:0;right:0;height:100%;width:290px;max-width:85vw;background:var(--panel);border-left:1px solid var(--border);z-index:999;padding:18px;overflow-y:auto;box-shadow:-10px 0 34px rgba(0,0,0,.35)}
+  #sideMenu{display:block;position:fixed;top:0;right:0;height:100%;width:290px;max-width:85vw;background:var(--panel);border-left:1px solid var(--border);z-index:999;padding:18px;overflow-y:auto;box-shadow:-10px 0 34px rgba(0,0,0,.35)}
   #sideMenuOverlay.is-hidden,#sideMenu.is-hidden{display:none}
   .side-menu-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
   .side-menu-head strong{font-size:1rem}
@@ -169,35 +169,35 @@
 <body>
 <div class="update-banner" id="updateBanner" style="display:none;position:sticky;top:0;z-index:9999;background:linear-gradient(135deg,#0a1a4a,#1e4fc0);color:#fff;text-align:center;padding:8px 14px;font-size:.85rem;font-weight:600;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap">
   <span data-i18n="updateMsg">⟳ Tem uma versão nova do PastaFácil pronta.</span>
-  <button type="button" onclick="location.reload()" style="background:#fff;color:#0a1a4a;border:none;border-radius:6px;padding:4px 12px;font-weight:700;cursor:pointer" data-i18n="updateBtn">Atualizar agora</button>
+  <button type="button" data-pf-action="reload" style="background:#fff;color:#0a1a4a;border:none;border-radius:6px;padding:4px 12px;font-weight:700;cursor:pointer" data-i18n="updateBtn">Atualizar agora</button>
 </div>
 
-<div id="sideMenuOverlay" class="is-hidden" onclick="pfCloseMenu()"></div>
-<nav id="sideMenu" class="is-hidden" aria-label="Menu">
+<div id="sideMenuOverlay" class="is-hidden" data-pf-action="close"></div>
+<nav id="sideMenu" class="is-hidden" role="dialog" aria-modal="true" aria-label="Menu">
 
   <div id="menuViewList">
     <div class="side-menu-head">
       <strong data-i18n="menuTitle">Menu</strong>
-      <button type="button" class="side-menu-close" onclick="pfCloseMenu()" aria-label="Fechar">✕</button>
+      <button type="button" class="side-menu-close" data-pf-action="close" aria-label="Fechar">✕</button>
     </div>
 
     <div class="side-menu-cat" data-i18n="menuCatAjuda">Ajuda</div>
-    <button type="button" class="menu-item" onclick="pfShowView('tutorial')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg><span data-i18n="tutorialBtn">Tutorial</span></button>
+    <button type="button" class="menu-item" data-pf-view="tutorial"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg><span data-i18n="tutorialBtn">Tutorial</span></button>
 
     <div class="side-menu-cat" data-i18n="menuCatSobre">Sobre o PastaFácil</div>
-    <button type="button" class="menu-item" onclick="pfShowView('recursos')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg><span data-i18n="recursosBtn">Recursos</span></button>
-    <button type="button" class="menu-item" onclick="pfShowView('privacidade')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg><span data-i18n="privacidadeBtn">Privacidade</span></button>
+    <button type="button" class="menu-item" data-pf-view="recursos"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg><span data-i18n="recursosBtn">Recursos</span></button>
+    <button type="button" class="menu-item" data-pf-view="privacidade"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg><span data-i18n="privacidadeBtn">Privacidade</span></button>
 
     <div class="side-menu-cat" data-i18n="menuCatDados">Meus dados (neste navegador)</div>
-    <button type="button" class="menu-item" onclick="pfShowView('historico')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v5h5"></path><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"></path><path d="M12 7v5l4 2"></path></svg><span data-i18n="historicoBtn">Histórico</span></button>
-    <button type="button" class="menu-item" onclick="pfShowView('lib')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span data-i18n="libTitle">Minhas listas salvas</span></button>
-    <button type="button" class="menu-item" onclick="pfShowView('config')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg><span data-i18n="configBtn">Configurações</span></button>
+    <button type="button" class="menu-item" data-pf-view="historico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v5h5"></path><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"></path><path d="M12 7v5l4 2"></path></svg><span data-i18n="historicoBtn">Histórico</span></button>
+    <button type="button" class="menu-item" data-pf-view="lib"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span data-i18n="libTitle">Minhas listas salvas</span></button>
+    <button type="button" class="menu-item" data-pf-view="config"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg><span data-i18n="configBtn">Configurações</span></button>
   </div>
 
   <div id="menuViewTutorial" class="is-hidden menu-subview">
     <div class="side-menu-head">
-      <button type="button" class="side-menu-back" onclick="pfShowView('list')">← <span data-i18n="menuVoltar">Voltar</span></button>
-      <button type="button" class="side-menu-close" onclick="pfCloseMenu()" aria-label="Fechar">✕</button>
+      <button type="button" class="side-menu-back" data-pf-action="back">← <span data-i18n="menuVoltar">Voltar</span></button>
+      <button type="button" class="side-menu-close" data-pf-action="close" aria-label="Fechar">✕</button>
     </div>
     <p class="hint" data-i18n="tutorialIntro" data-i18n-html><b>Visão geral:</b> a ferramenta tem dois modos, alternáveis nos botões abaixo da lista: <b>"Criar pastas"</b> (gera uma pasta pra cada nome de uma lista) e <b>"Renomear existentes"</b> (renomeia pastas que já existem no seu computador). Os dois rodam 100% no navegador, nada do que você digita ou envia sai do seu computador.</p>
     <p class="hint" data-i18n="tutorialInput" data-i18n-html><b>1. Fornecer a lista de nomes</b><br>Na aba "Colar nomes", digite ou cole um nome por linha (linhas em branco e as que começam com <code>#</code> são ignoradas). Na aba "Enviar arquivos", você pode enviar: <b>.txt/.csv</b> (uma linha ou coluna por nome), <b>.xlsx/.xls</b> (planilha, com escolha de colunas), <b>PDF</b> (o texto é extraído automaticamente) ou uma <b>imagem/foto/print</b> (a ferramenta lê o texto da imagem por OCR, inclusive colando direto com Ctrl+V). Revise sempre o resultado do PDF/OCR: a leitura automática não é 100% exata, principalmente em letra de mão ou fotos tortas/escuras.</p>
@@ -214,8 +214,8 @@
 
   <div id="menuViewRecursos" class="is-hidden menu-subview">
     <div class="side-menu-head">
-      <button type="button" class="side-menu-back" onclick="pfShowView('list')">← <span data-i18n="menuVoltar">Voltar</span></button>
-      <button type="button" class="side-menu-close" onclick="pfCloseMenu()" aria-label="Fechar">✕</button>
+      <button type="button" class="side-menu-back" data-pf-action="back">← <span data-i18n="menuVoltar">Voltar</span></button>
+      <button type="button" class="side-menu-close" data-pf-action="close" aria-label="Fechar">✕</button>
     </div>
     <h3 data-i18n="recursosTitle">✅ Recursos do PastaFácil</h3>
     <p class="hint" data-i18n="recursosSubtitle">Tudo abaixo já funciona, hoje, na ferramenta.</p>
@@ -253,8 +253,8 @@
 
   <div id="menuViewPrivacidade" class="is-hidden menu-subview">
     <div class="side-menu-head">
-      <button type="button" class="side-menu-back" onclick="pfShowView('list')">← <span data-i18n="menuVoltar">Voltar</span></button>
-      <button type="button" class="side-menu-close" onclick="pfCloseMenu()" aria-label="Fechar">✕</button>
+      <button type="button" class="side-menu-back" data-pf-action="back">← <span data-i18n="menuVoltar">Voltar</span></button>
+      <button type="button" class="side-menu-close" data-pf-action="close" aria-label="Fechar">✕</button>
     </div>
     <h3 data-i18n="privacidadeTitle">🔒 Privacidade</h3>
     <p class="hint" data-i18n="privacidade1" data-i18n-html><b>Nada sai do seu computador.</b> A lista de nomes, os arquivos que você envia e as pastas geradas são processados 100% dentro do seu navegador.</p>
@@ -266,8 +266,8 @@
 
   <div id="menuViewHistorico" class="is-hidden menu-subview">
     <div class="side-menu-head">
-      <button type="button" class="side-menu-back" onclick="pfShowView('list')">← <span data-i18n="menuVoltar">Voltar</span></button>
-      <button type="button" class="side-menu-close" onclick="pfCloseMenu()" aria-label="Fechar">✕</button>
+      <button type="button" class="side-menu-back" data-pf-action="back">← <span data-i18n="menuVoltar">Voltar</span></button>
+      <button type="button" class="side-menu-close" data-pf-action="close" aria-label="Fechar">✕</button>
     </div>
     <h3 data-i18n="historicoTitle">🕘 Histórico de operações</h3>
     <p class="hint" data-i18n="historicoHint">Guarda, só neste navegador, as últimas vezes que você criou ou renomeou pastas (data, quantidade e onde). Não guarda a lista de nomes em si.</p>
@@ -278,8 +278,8 @@
 
   <div id="menuViewLib" class="is-hidden menu-subview">
     <div class="side-menu-head">
-      <button type="button" class="side-menu-back" onclick="pfShowView('list')">← <span data-i18n="menuVoltar">Voltar</span></button>
-      <button type="button" class="side-menu-close" onclick="pfCloseMenu()" aria-label="Fechar">✕</button>
+      <button type="button" class="side-menu-back" data-pf-action="back">← <span data-i18n="menuVoltar">Voltar</span></button>
+      <button type="button" class="side-menu-close" data-pf-action="close" aria-label="Fechar">✕</button>
     </div>
     <h3><span data-i18n="libTitle">Minhas listas salvas</span> (<span id="libCount">0</span>)</h3>
     <ul class="files" id="libList"></ul>
@@ -288,8 +288,8 @@
 
   <div id="menuViewConfig" class="is-hidden menu-subview">
     <div class="side-menu-head">
-      <button type="button" class="side-menu-back" onclick="pfShowView('list')">← <span data-i18n="menuVoltar">Voltar</span></button>
-      <button type="button" class="side-menu-close" onclick="pfCloseMenu()" aria-label="Fechar">✕</button>
+      <button type="button" class="side-menu-back" data-pf-action="back">← <span data-i18n="menuVoltar">Voltar</span></button>
+      <button type="button" class="side-menu-close" data-pf-action="close" aria-label="Fechar">✕</button>
     </div>
     <h3 data-i18n="configTitle">⚙ Configurações</h3>
     <p class="hint" data-i18n="configHint" data-i18n-html>Idioma e tema já ficam salvos automaticamente (os botões no topo da página). Aqui você pode salvar como <b>padrão</b> as opções abaixo, pra elas já virem marcadas assim toda vez que abrir a ferramenta - sem precisar reconfigurar em cada lista.</p>
@@ -305,11 +305,11 @@
 
 <div class="wrap">
   <div class="topbar">
-    <button class="btn ghost sm" id="btnMenu" onclick="pfOpenMenu()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;margin-right:3px"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg><span data-i18n="menuBtn">Menu</span></button>
+    <button class="btn ghost sm" id="btnMenu" data-pf-action="open"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;margin-right:3px"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg><span data-i18n="menuBtn">Menu</span></button>
     <div class="langswitch">
       <button data-lang="pt">PT</button><button data-lang="en">EN</button><button data-lang="es">ES</button>
     </div>
-    <button class="theme-toggle" id="pfThemeToggle" onclick="pfToggleTheme()" aria-label="Alternar tema claro/escuro" title="Alternar tema claro/escuro"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></button>
+    <button class="theme-toggle" id="pfThemeToggle" data-pf-action="theme" aria-label="Alternar tema claro/escuro" title="Alternar tema claro/escuro"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></button>
     <button class="btn ghost" id="btnInstall" hidden><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;margin-right:3px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg><span data-i18n="install">Instalar app</span></button>
   </div>
   <h1><img class="logo" src="/pastafacil/icon.svg" alt=""> Pasta<span>Fácil</span></h1>
@@ -550,151 +550,10 @@
 </div><!-- /modeRename -->
 
 <script src="/pastafacil/app/i18n.js"></script>
-<script>
-  // Tema comeca seguindo a preferencia do sistema operacional/navegador
-  // (prefers-color-scheme), mas o botao ao lado dos idiomas deixa escolher
-  // manualmente - a escolha fica em localStorage e sincroniza com a pagina
-  // externa do site.
-  // IMPORTANTE: so grava no localStorage quando a pessoa escolhe manualmente
-  // (persist=true). Se gravasse tambem ao apenas "seguir o sistema", o tema
-  // ficava congelado depois da 1a visita e parava de acompanhar o SO.
-  function pfAplicarTema(tema, persist) {
-    document.documentElement.setAttribute('data-theme', tema);
-    if (persist) { try { localStorage.setItem('pastafacil-theme', tema); } catch (e) {} }
-    var btn = document.getElementById('pfThemeToggle');
-    if (btn) btn.innerHTML = tema === 'light'
-      ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>'
-      : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
-  }
-  function pfToggleTheme() {
-    var atual = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
-    pfAplicarTema(atual === 'light' ? 'dark' : 'light', true);
-  }
-  // O menu lateral tem varias "telas" (list, tutorial, historico, lib,
-  // config) - so uma fica visivel por vez dentro do proprio menu, sem
-  // precisar rolar a pagina nem esses conteudos aparecerem soltos nela.
-  var MENU_VIEWS = ['list', 'tutorial', 'recursos', 'privacidade', 'historico', 'lib', 'config'];
-  function pfShowView(view) {
-    MENU_VIEWS.forEach(function (v) {
-      var el = document.getElementById('menuView' + v.charAt(0).toUpperCase() + v.slice(1));
-      if (el) el.classList.toggle('is-hidden', v !== view);
-    });
-    if (view === 'config' && typeof pfRefreshConfigAtual === 'function') pfRefreshConfigAtual();
-    var nav = document.getElementById('sideMenu');
-    if (nav) nav.scrollTop = 0;
-  }
-  function pfShowMenu() {
-    document.getElementById('sideMenu').classList.remove('is-hidden');
-    document.getElementById('sideMenuOverlay').classList.remove('is-hidden');
-  }
-  function pfOpenMenu() { pfShowMenu(); pfShowView('list'); }
-  function pfOpenTutorial() { pfShowMenu(); pfShowView('tutorial'); }
-  function pfOpenHistorico() { pfShowMenu(); pfShowView('historico'); }
-  function pfOpenConfig() { pfShowMenu(); pfShowView('config'); }
-  function pfOpenLib() { pfShowMenu(); pfShowView('lib'); }
-  function pfCloseMenu() {
-    document.getElementById('sideMenu').classList.add('is-hidden');
-    document.getElementById('sideMenuOverlay').classList.add('is-hidden');
-  }
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') pfCloseMenu(); });
-  (function () {
-    var salvo = null;
-    try { salvo = localStorage.getItem('pastafacil-theme'); } catch (e) {}
-    var mql = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)');
-    pfAplicarTema(salvo || (mql && mql.matches ? 'light' : 'dark'), false);
-    // Enquanto a pessoa nao escolher manualmente, o tema acompanha o SO ao vivo.
-    if (mql && mql.addEventListener) mql.addEventListener('change', function (ev) {
-      var escolha = null;
-      try { escolha = localStorage.getItem('pastafacil-theme'); } catch (e) {}
-      if (!escolha) pfAplicarTema(ev.matches ? 'light' : 'dark', false);
-    });
-  })();
-  // Mantem o tema em sincronia com a pagina externa (mesma origem, mesmo localStorage)
-  window.addEventListener('storage', function (e) {
-    if (e.key === 'pastafacil-theme' && e.newValue) pfAplicarTema(e.newValue, false);
-  });
-
-  PastaFacilI18n.init();
-  document.querySelectorAll(".langswitch button").forEach(function (b) {
-    b.addEventListener("click", function () { PastaFacilI18n.apply(b.dataset.lang); });
-  });
-</script>
+<script src="/pastafacil/app/boot.js"></script>
 <script src="/pastafacil/app/vendor/jszip.min.js"></script>
 <script src="/pastafacil/app/core.js"></script>
 <script src="/pastafacil/app/db.js"></script>
 <script src="/pastafacil/app/app.js"></script>
-<script>
-  // PWA: instalar + offline
-  function showUpdateBanner() {
-    var b = document.getElementById("updateBanner");
-    if (!b) return;
-    b.style.display = "flex";
-    // Busca o sw.js recem-instalado (sem cache) so pra ler a versao e o
-    // motivo da atualizacao (VERSION/CHANGENOTE) e mostrar pra pessoa,
-    // antes dela decidir clicar em "Atualizar agora".
-    fetch("/pastafacil/app/sw.js", { cache: "no-store" }).then(function (r) { return r.text(); }).then(function (txt) {
-      var v = (txt.match(/var VERSION = "([^"]+)"/) || [])[1];
-      var nota = (txt.match(/var CHANGENOTE = "([^"]*)"/) || [])[1];
-      var span = b.querySelector("[data-i18n='updateMsg']");
-      if (!span || !v) return;
-      var key = nota ? "updateFull" : "updateVersion";
-      var texto = tr(key);
-      // Se a traducao nao resolveu de verdade (ex.: i18n.js ainda nao carregou
-      // nessa aba), NAO troca o texto - mantem a frase padrao em portugues
-      // que ja esta no HTML, em vez de mostrar o nome tecnico da chave.
-      if (!texto || texto === key) return;
-      span.textContent = "⟳ " + texto.replace("{v}", v.replace(/^pf-v/, "v")).replace("{nota}", nota || "");
-    }).catch(function () {});
-  }
-  function tr(k) {
-    if (!window.PastaFacilI18n || typeof PastaFacilI18n.t !== "function") return "";
-    return PastaFacilI18n.t(k);
-  }
-  if ("serviceWorker" in navigator &&
-      (location.protocol === "https:" || location.hostname === "localhost" || location.hostname === "127.0.0.1")) {
-    window.addEventListener("load", function () {
-      navigator.serviceWorker.register("/pastafacil/app/sw.js").then(function (reg) {
-        // "updatefound" dispara sempre que um sw.js novo comeca a instalar.
-        // Se ja existe um controller nesse momento, essa nao e a primeira
-        // visita - e uma ATUALIZACAO de verdade, e avisamos a pessoa.
-        reg.addEventListener("updatefound", function () {
-          var novo = reg.installing;
-          if (!novo) return;
-          novo.addEventListener("statechange", function () {
-            if (novo.state === "installed" && navigator.serviceWorker.controller) {
-              showUpdateBanner();
-            }
-          });
-        });
-        // Verifica de novo a cada 20 min (util pra quem deixa a aba aberta
-        // por muito tempo, sem nunca recarregar a pagina).
-        setInterval(function () { reg.update().catch(function () {}); }, 20 * 60 * 1000);
-      }).catch(function () {});
-    });
-  }
-  (function () {
-    var deferred = null;
-    var btn = document.getElementById("btnInstall");
-    window.addEventListener("beforeinstallprompt", function (e) {
-      e.preventDefault(); deferred = e; if (btn) btn.hidden = false;
-    });
-    // iOS/iPadOS nunca dispara "beforeinstallprompt" (nao existe API de
-    // instalar programaticamente la) - mas ainda da pra instalar manualmente
-    // via Compartilhar > Adicionar a Tela de Inicio. Mostra o botao mesmo
-    // assim nesse caso, com instrucao passo a passo em vez do prompt nativo.
-    var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-    var jaInstalado = window.navigator.standalone === true || window.matchMedia("(display-mode: standalone)").matches;
-    if (isIOS && !jaInstalado && btn) btn.hidden = false;
-    if (btn) btn.addEventListener("click", function () {
-      if (deferred) {
-        deferred.prompt();
-        deferred.userChoice.finally(function () { deferred = null; btn.hidden = true; });
-        return;
-      }
-      if (isIOS) alert(tr("installIosSteps"));
-    });
-    window.addEventListener("appinstalled", function () { if (btn) btn.hidden = true; });
-  })();
-</script>
 </body>
 </html>

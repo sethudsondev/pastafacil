@@ -44,6 +44,10 @@
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[m];
     });
   }
+  // Icone "remover/apagar" (X), repetido em varias listas (arquivos, documentos, biblioteca,
+  // historico, mapeamentos). Um so lugar pra mudar o desenho, em vez de 5 copias do mesmo SVG.
+  var CLOSE_SVG = "<svg width=\"12\" height=\"12\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><line x1=\"18\" y1=\"6\" x2=\"6\" y2=\"18\"></line><line x1=\"6\" y1=\"6\" x2=\"18\" y2=\"18\"></line></svg>";
+
   // Nome do documento (d.name = File.name) usado como entrada no zip ou como nome de arquivo real
   // (File System Access API). Em arquivos soltos do disco isso nunca traz "/" - o navegador nao
   // deixa -, mas nao ha garantia pra sempre (ex.: um File montado por script). So essa barra e' o
@@ -357,7 +361,7 @@
         li.appendChild(n); li.appendChild(c);
       }
       var b = document.createElement("button");
-      b.type = "button"; b.innerHTML = "<svg width=\"12\" height=\"12\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><line x1=\"18\" y1=\"6\" x2=\"6\" y2=\"18\"></line><line x1=\"6\" y1=\"6\" x2=\"18\" y2=\"18\"></line></svg>"; b.title = tr("r_titleRemove");
+      b.type = "button"; b.innerHTML = CLOSE_SVG; b.title = tr("r_titleRemove");
       b.onclick = function () { files.splice(i, 1); renderFiles(); refreshTableOpts(); reportHeight(); };
       li.appendChild(b);
       el.fileList.appendChild(li);
@@ -543,7 +547,7 @@
       var n = document.createElement("span"); n.className = "n"; n.textContent = d.name;
       var c = document.createElement("span"); c.className = "c"; c.textContent = fmtSize(d.buffer.byteLength);
       var b = document.createElement("button");
-      b.type = "button"; b.innerHTML = "<svg width=\"12\" height=\"12\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><line x1=\"18\" y1=\"6\" x2=\"6\" y2=\"18\"></line><line x1=\"6\" y1=\"6\" x2=\"18\" y2=\"18\"></line></svg>"; b.title = tr("r_titleRemove");
+      b.type = "button"; b.innerHTML = CLOSE_SVG; b.title = tr("r_titleRemove");
       b.onclick = function () { docs.splice(i, 1); renderDocs(); reportHeight(); };
       li.appendChild(n); li.appendChild(c); li.appendChild(b);
       el.docList.appendChild(li);
@@ -1186,7 +1190,7 @@
         c.className = "c";
         c.textContent = new Date(it.updatedAt).toLocaleDateString(dloc());
         var b = document.createElement("button");
-        b.type = "button"; b.innerHTML = "<svg width=\"12\" height=\"12\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><line x1=\"18\" y1=\"6\" x2=\"6\" y2=\"18\"></line><line x1=\"6\" y1=\"6\" x2=\"18\" y2=\"18\"></line></svg>"; b.title = tr("r_titleDelete");
+        b.type = "button"; b.innerHTML = CLOSE_SVG; b.title = tr("r_titleDelete");
         b.onclick = function () {
           if (confirm(trf("r_confirmDeleteOne", { name: it.name }))) DB.remove(it.id).then(refreshLibrary);
         };
@@ -1246,7 +1250,7 @@
         b.type = "button";
         b.title = tr("historicoRemover");
         b.style.cssText = "background:none;border:none;color:var(--dim);cursor:pointer;font-size:1rem;padding:0 4px;flex:none";
-        b.innerHTML = "<svg width=\"12\" height=\"12\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><line x1=\"18\" y1=\"6\" x2=\"6\" y2=\"18\"></line><line x1=\"6\" y1=\"6\" x2=\"18\" y2=\"18\"></line></svg>";
+        b.innerHTML = CLOSE_SVG;
         b.onclick = function () { HIST.remove(it.id).then(refreshHistorico); };
         li.appendChild(n); li.appendChild(c); li.appendChild(b);
         el.historicoList.appendChild(li);
@@ -1533,48 +1537,15 @@
     }
   });
 
+  // Parsing do texto e o casamento pasta<->mapeamento moraram aqui antes;
+  // agora vivem em core.js (C.parseRenameMapping/C.buildRenamePlan), puros e
+  // testados sem depender da tela - aqui so' repassamos o estado da UI.
   function parseMapping() {
-    return C.linesFromText(rn.text.value).map(function (line) {
-      var m = line.split(/\s*=>\s*|\t|\s*\|\s*|\s*;\s*/);
-      if (m.length >= 2) return { from: m[0].trim(), to: m.slice(1).join(" ").trim() };
-      // Sem separador (so uma palavra/frase, sem "de => para"): so faz
-      // sentido se so existe UMA subpasta - nesse caso, entende que a linha
-      // inteira e o nome novo pra ela, sem precisar repetir o nome atual.
-      if (rnFolders.length === 1 && line.trim()) return { from: rnFolders[0].name, to: line.trim() };
-      return null;
-    }).filter(function (x) { return x && x.from && x.to; });
+    return C.parseRenameMapping(rn.text.value, rnFolders.length === 1 ? rnFolders[0].name : null);
   }
 
   function buildRenamePlan() {
-    // Agrupa por nome normalizado - se o mesmo nome aparecer em mais de uma
-    // subpasta (em ramos diferentes da arvore), fica ambiguo: nao da pra
-    // saber qual das duas a pessoa quis dizer so pelo nome, entao nenhuma e
-    // renomeada automaticamente nesse caso (evita renomear a pasta errada).
-    var byNorm = {};
-    rnFolders.forEach(function (f) {
-      var k = C.norm(f.name);
-      (byNorm[k] = byNorm[k] || []).push(f);
-    });
-    var targetNames = {};
-    rnFolders.forEach(function (f) { targetNames[C.norm(f.name)] = true; });
-
-    var plan = [];
-    parseMapping().forEach(function (map) {
-      var candidatos = byNorm[C.norm(map.from)] || [];
-      var newName = C.sanitizeSegment(map.to);
-      if (!candidatos.length) { plan.push({ from: map.from, to: newName, status: "sem-pasta" }); return; }
-      if (candidatos.length > 1) {
-        plan.push({ from: map.from, to: newName, status: "ambiguo", caminhos: candidatos.map(function (c) { return c.path; }) });
-        return;
-      }
-      var folder = candidatos[0];
-      if (!newName) { plan.push({ from: folder.path, to: "", status: "invalido" }); return; }
-      if (C.norm(newName) === C.norm(folder.name)) { plan.push({ from: folder.path, to: newName, status: "ja-ok" }); return; }
-      if (targetNames[C.norm(newName)]) { plan.push({ from: folder.path, to: newName, status: "conflito", handle: folder.handle }); return; }
-      targetNames[C.norm(newName)] = true;
-      plan.push({ from: folder.path, to: newName, status: "renomear", handle: folder.handle, parent: folder.parent, name: folder.name });
-    });
-    return plan;
+    return C.buildRenamePlan(rnFolders, parseMapping());
   }
 
   var RN_LABEL_KEY = { renomear: "rn_lblRename", "ja-ok": "rn_lblJaOk", "sem-pasta": "rn_lblNoFolder", conflito: "rn_lblConflict", invalido: "rn_lblInvalid", ambiguo: "rn_lblAmbiguous" };
@@ -1678,7 +1649,7 @@
       var c = document.createElement("span"); c.className = "c"; c.textContent = new Date(it.updatedAt).toLocaleDateString(dloc());
       var b = document.createElement("button");
       b.type = "button";
-      b.innerHTML = "<svg width=\"12\" height=\"12\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><line x1=\"18\" y1=\"6\" x2=\"6\" y2=\"18\"></line><line x1=\"6\" y1=\"6\" x2=\"18\" y2=\"18\"></line></svg>";
+      b.innerHTML = CLOSE_SVG;
       b.title = tr("r_titleDelete");
       b.onclick = function () {
         if (!confirm(trf("r_confirmDeleteOne", { name: it.name }))) return;
