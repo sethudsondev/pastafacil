@@ -44,6 +44,16 @@
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[m];
     });
   }
+  // Nome do documento (d.name = File.name) usado como entrada no zip ou como nome de arquivo real
+  // (File System Access API). Em arquivos soltos do disco isso nunca traz "/" - o navegador nao
+  // deixa -, mas nao ha garantia pra sempre (ex.: um File montado por script). So essa barra e' o
+  // risco real: dentro do zip ela criaria subpasta(s) e um ".." poderia escapar da pasta de
+  // destino ao extrair (zip slip). Troca so "/" "\" e caracteres de controle - mantem o resto do
+  // nome (inclusive espacos e acentos) igual ao que aparece na tela, pra nao confundir a pessoa.
+  function docEntryName(name) {
+    var s = String(name == null ? "" : name).replace(/[/\\]+/g, "-").replace(/[\u0000-\u001f]/g, "");
+    return /^\.+$/.test(s) || !s ? "arquivo" : s;
+  }
   function reportHeightNow() {
     if (window.parent === window) return;
     // Mesma origem da pagina externa (lumvix.com.br) - nao manda "*".
@@ -809,7 +819,7 @@
           "Pasta criada com PastaFácil (lumvix.com.br/pastafacil)\nOrigem: " + String(p.original).trim() + "\n");
       }
       var ds = docsByPath && docsByPath[p.path];
-      if (ds) ds.forEach(function (d) { f.file(d.name, d.buffer); });
+      if (ds) ds.forEach(function (d) { f.file(docEntryName(d.name), d.buffer); });
     });
   }
 
@@ -823,8 +833,14 @@
 
   // Exporta a previa (Criar ou Renomear) como CSV, pra conferir fora da
   // ferramenta antes de aplicar de verdade. "rows" = array de arrays de texto.
+  //
+  // Nomes vindos da lista da pessoa (ou de outra planilha, colada/importada) podem comecar com
+  // =, +, - ou @ - Excel/LibreOffice/Sheets tratam isso como formula e executam na hora de abrir
+  // o CSV (ex.: "=HYPERLINK(...)" vazando dados). Um apostrofo na frente neutraliza sem mudar o
+  // que aparece na celula (convencao padrao de escape de formula em CSV).
   function csvEscape(v) {
     var s = String(v == null ? "" : v);
+    if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;
     return /[",\n;]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
   }
   function exportCsv(filename, headers, rows) {
@@ -898,7 +914,7 @@
         var outer = new JSZip();
         outer.file("_pastafacil-relatorio.txt", relatorioText(j.r.plan, j.r.counts, j.who));
         if (j.docCount) outer.file("_pastafacil-registro-anexos.txt", registroAnexosText(j.docsByPath, j.who));
-        j.semCorresp.forEach(function (d) { outer.folder("_sem-correspondencia").file(d.name, d.buffer); });
+        j.semCorresp.forEach(function (d) { outer.folder("_sem-correspondencia").file(docEntryName(d.name), d.buffer); });
         var keys = Object.keys(j.groups);
         return keys.reduce(function (chain, g, idx) {
           return chain.then(function () {
@@ -920,7 +936,7 @@
       var zip = new JSZip();
       var root = j.base ? zip.folder(j.base) : zip;
       addFolders(root, j.criaveis, j.keep, "", j.docsByPath);
-      j.semCorresp.forEach(function (d) { root.folder("_sem-correspondencia").file(d.name, d.buffer); });
+      j.semCorresp.forEach(function (d) { root.folder("_sem-correspondencia").file(docEntryName(d.name), d.buffer); });
       root.file("_pastafacil-relatorio.txt", relatorioText(j.r.plan, j.r.counts, j.who));
       if (j.docCount) root.file("_pastafacil-registro-anexos.txt", registroAnexosText(j.docsByPath, j.who));
       return zip.generateAsync({ type: "blob", streamFiles: true }, function (meta) {
@@ -991,7 +1007,7 @@
                 if (j.keep) extra.push(writeFileInto(leaf, "LEIA-ME.txt",
                   "Pasta criada com PastaFácil (lumvix.com.br/pastafacil)\nOrigem: " + String(p.original).trim() + "\n"));
                 var ds = j.docsByPath[p.path];
-                if (ds) ds.forEach(function (d) { extra.push(writeFileInto(leaf, d.name, d.buffer)); });
+                if (ds) ds.forEach(function (d) { extra.push(writeFileInto(leaf, docEntryName(d.name), d.buffer)); });
                 return Promise.all(extra);
               }).catch(function () { erros++; }).then(function () {
                 done++;
@@ -1002,7 +1018,7 @@
           return step.then(function () {
             var tail = [];
             j.semCorresp.forEach(function (d) {
-              tail.push(ensureDir(rootHandle, "_sem-correspondencia", cache).then(function (h) { return writeFileInto(h, d.name, d.buffer); }));
+              tail.push(ensureDir(rootHandle, "_sem-correspondencia", cache).then(function (h) { return writeFileInto(h, docEntryName(d.name), d.buffer); }));
             });
             tail.push(writeFileInto(rootHandle, "_pastafacil-relatorio.txt", relatorioText(j.r.plan, j.r.counts, j.who)));
             if (j.docCount) tail.push(writeFileInto(rootHandle, "_pastafacil-registro-anexos.txt", registroAnexosText(j.docsByPath, j.who)));
