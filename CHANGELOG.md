@@ -3,6 +3,17 @@
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/). A versão em uso
 aparece no rodapé do aviso "Nova versão disponível" (`VERSION` em `pastafacil/app/sw.js`).
 
+## [pf-v36] - 2026-09-28
+
+### Segurança
+- **`vendor/xlsx.full.min.js` (SheetJS) atualizado de 0.18.5 para 0.20.3** - a versão antiga tem
+  duas vulnerabilidades conhecidas corrigidas só a partir da 0.19.3: *Prototype Pollution*
+  ([GHSA-4r6h-8v6p-xvw6](https://github.com/advisories/GHSA-4r6h-8v6p-xvw6)) e *ReDoS*
+  ([GHSA-5pgg-2g8v-p4x9](https://github.com/advisories/GHSA-5pgg-2g8v-p4x9)), ambas
+  exploráveis com uma planilha `.xlsx/.xls/.xlsm/.ods` maliciosa importada na aba "Enviar
+  arquivos". Testado de verdade (Playwright, sob a CSP real): importar `.xlsx`, detectar
+  colunas e gerar a prévia continuam funcionando igual, sem violação de CSP.
+
 ## [pf-v35] - 2026-09-28
 
 ### Segurança

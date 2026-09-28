@@ -4,13 +4,13 @@
    quem já usou o app antes continua vendo a versão antiga em cache
    indefinidamente (o service worker so busca tudo de novo quando a VERSION
    muda). */
-var VERSION = "pf-v35";
+var VERSION = "pf-v36";
 // Motivo desta atualizacao, mostrado no aviso "tem uma versao nova" da
 // pagina (junto com o numero da versao acima). Atualize essa frase toda
 // vez que bumpar a VERSION, resumindo o que mudou (correcao de bug, novo
 // recurso, melhoria etc.) - a pessoa que usa a ferramenta ve isso antes
 // de clicar em "Atualizar agora".
-var CHANGENOTE = "Bastidores mais seguros (Content-Security-Policy e correcao de injecao de formula no CSV exportado), teclado funciona melhor no menu e o modo Renomear ganhou testes automatizados. Nada muda na tela.";
+var CHANGENOTE = "Biblioteca de leitura de Excel/planilhas atualizada (correcao de seguranca). Nada muda na tela.";
 var SHELL = [
   "./",
   "./index.html",
